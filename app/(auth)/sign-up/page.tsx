@@ -1,3 +1,5 @@
+"use client";
+
 // package
 import Link from "next/link";
 import Image from "next/image";
@@ -11,8 +13,10 @@ import Input from "@/form/input";
 
 // lib
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export default function Page() {
+  const [isChecked, setIsChecked] = useState(false);
   return (
     <div className="relative bg-[#F3F5F7] lg:min-h-screen">
       <div
@@ -32,7 +36,7 @@ export default function Page() {
             weight={500}
             className="absolute left-0 top-8 w-full text-center"
           >
-            Kupingplug
+            Rent-A-Thing
           </Text>
 
           <Image
@@ -59,11 +63,12 @@ export default function Page() {
               </h1>
               <Text weight={400} color="gray">
                 Already have an account?{" "}
-                <span className="font-semibold text-[#38CB89] hover:underline">
+                <span className="font-semibold text-black hover:underline">
                   <Link href="/sign-in">Sign In</Link>
                 </span>
               </Text>
             </div>
+
             <div className="space-y-8">
               <div className="border-b border-[#E8ECEF] pb-2 focus-within:border-[#141718]">
                 <Input intent="secondary" type="text" placeholder="Your name" />
@@ -85,28 +90,31 @@ export default function Page() {
                   placeholder="Password"
                 />
               </div>
+              
               <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-md border border-[#6C7275]"></div>
-                <Text
-                  size="xs"
-                  weight={400}
-                  color="gray"
-                  className="md:text-sm"
-                >
-                  I agree with{" "}
-                  <span className="font-semibold text-[#141718]">
-                    Privacy Policy
-                  </span>{" "}
-                  and{" "}
-                  <span className="font-semibold text-[#141718]">
-                    Terms of Use
-                  </span>
-                </Text>
-                <p></p>
+                <input 
+                  type="checkbox"
+                  id="terms"
+                  className="h-6 w-6 accent-black cursor-pointer rounded-md border border-[#6C7275]"
+                  checked={isChecked}
+                  onChange={() => setIsChecked(!isChecked)}
+                />
+                <label htmlFor="terms" className="cursor-pointer">
+                  <Text
+                    size="xs"
+                    weight={400}
+                    color="gray"
+                    className="md:text-sm"
+                  >
+                    I agree with{" "}
+                    <span className="font-semibold text-[#141718]">Privacy Policy</span> and{" "}
+                    <span className="font-semibold text-[#141718]">Terms of Use</span>
+                  </Text>
+                </label>
               </div>
             </div>
 
-            <Button width="full" className="py-2.5">
+            <Button width="full" className="py-2.5" disabled={!isChecked}>
               Sign Up
             </Button>
           </div>
