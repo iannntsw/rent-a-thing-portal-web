@@ -31,7 +31,7 @@ function DropdownSubLinks({ subLinks }: { subLinks?: SubLinkProps[] }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
-    <ul className="min-w-[250px] rounded-lg border border-gray-400 bg-white p-1 shadow-lg">
+    <ul className="min-w-[250px] rounded-lg border border-white-400 bg-white p-1 shadow-lg">
       {/* map subLinks */}
       {subLinks?.map((link, idx) => (
         <li key={link.path} className="relative">
@@ -40,7 +40,7 @@ function DropdownSubLinks({ subLinks }: { subLinks?: SubLinkProps[] }) {
             <div onMouseLeave={() => setActiveIndex(null)}>
               <button
                 onMouseOver={() => setActiveIndex(idx)}
-                className="flex w-full items-center justify-between rounded-md px-4 py-2 font-inter text-sm text-[#141718] hover:bg-gray-200"
+                className="flex w-full items-center justify-between rounded-md px-4 py-2 font-inter text-sm text-[#141718] hover:bg-white-200"
               >
                 <span>{link.name}</span>
                 <DropdownIcon className="h-[18px] w-[18px] -rotate-90" />
@@ -54,7 +54,7 @@ function DropdownSubLinks({ subLinks }: { subLinks?: SubLinkProps[] }) {
           ) : (
             <Link
               href={link.path}
-              className="inline-block w-full rounded-md px-4 py-2 font-inter text-sm text-[#141718] hover:bg-gray-200"
+              className="inline-block w-full rounded-md px-4 py-2 font-inter text-sm text-[#141718] hover:bg-white-200"
             >
               {link.name}
             </Link>

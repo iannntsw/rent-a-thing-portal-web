@@ -21,6 +21,10 @@ module.exports = {
         poppins: ["var(--font-poppins)", "sans-serif"],
       },
       colors: {
+        matcha: "hsl(var(--matcha))",
+        pistachio: "hsl(var(--pistachio))",
+        almond: "hsl(var(--almond))",
+        hickory: "hsl(var(--hickory))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
