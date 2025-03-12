@@ -31,20 +31,30 @@ export default function Home() {
         className="flex flex-col items-center justify-between lg:grid lg:grid-cols-2 lg:pt-8"
       >
         {/* Text content */}
-        <div className="flex flex-col items-center gap-4 p-8 sm:max-w-[600px] md:max-w-[600px] md:py-16 lg:order-2 lg:max-w-none lg:items-start lg:p-0">
-          <div className="space-y-2 text-center lg:text-left">
-            <Heading as="h1" intent="hero-section">
-              Listen to the <span className="text-[#377DFF]">amazing</span>{" "}
-              music sound.
+        <div className="flex flex-col items-center gap-6 p-10 sm:max-w-[600px] md:max-w-[600px] md:py-20 lg:order-2 lg:max-w-none lg:items-start lg:p-0">
+          <div className="space-y-4 text-center lg:text-left">
+            <Heading as="h1" intent="hero-section" className="text-4xl font-bold leading-tight">
+              Why buy when you can 
+              <span className="bg-gradient-to-r from-[#377DFF] to-[#00C2FF] bg-clip-text text-transparent">
+                {" "}rent?
+              </span>
             </Heading>
-            <Text className="md:text-lg lg:text-xl">
-              Experience music like never before
+            
+            <Text className="md:text-lg lg:text-l text-gray-700 ml-2">
+              Rent what you need, when you need it — hassle-free.
             </Text>
           </div>
-          <Button fontSize="sm" className="px-14 py-3 md:text-lg">
-            Shopping Now
-          </Button>
+
+          <Link href="/sign-up">
+            <Button 
+              fontSize="sm"
+              className="px-14 py-3 md:text-lg bg-[#377DFF] hover:bg-[#0057D9] text-white rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
+            >
+              Get Started
+            </Button>
+          </Link>
         </div>
+
 
         {/* Image content */}
         <div className="flex h-auto w-full items-end justify-center overflow-hidden lg:order-1">
