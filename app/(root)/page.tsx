@@ -27,34 +27,35 @@ export default function Home() {
     <>
       {/* Hero section */}
       <SectionLayout
-        bg="bg-[#ffc95c]"
+        bg="bg-[#809671]"
         className="flex flex-col items-center justify-between lg:grid lg:grid-cols-2 lg:pt-8"
       >
         {/* Text content */}
         <div className="flex flex-col items-center gap-6 p-10 sm:max-w-[600px] md:max-w-[600px] md:py-20 lg:order-2 lg:max-w-none lg:items-start lg:p-0">
           <div className="space-y-4 text-center lg:text-left">
-            <Heading as="h1" intent="hero-section" className="text-4xl font-bold leading-tight">
-              Why buy when you can 
-              <span className="bg-gradient-to-r from-[#377DFF] to-[#00C2FF] bg-clip-text text-transparent">
-                {" "}rent?
+            <Heading
+              as="h1"
+              intent="hero-section"
+              className="text-4xl font-bold leading-tight text-[#F3F3F3]"
+            >
+              Why buy when you can
+              <span className="bg-gradient-to-r from-[#BFCAB8] to-[#D8DFD4] bg-clip-text text-transparent">
+                {" "}
+                rent?
               </span>
             </Heading>
-            
-            <Text className="md:text-lg lg:text-l text-gray-700 ml-2">
+
+            <Text className="lg:text-l ml-2 text-[#F3F3F3] md:text-lg">
               Rent what you need, when you need it — hassle-free.
             </Text>
           </div>
 
           <Link href="/sign-up">
-            <Button 
-              fontSize="sm"
-              className="px-14 py-3 md:text-lg bg-[#377DFF] hover:bg-[#0057D9] text-white rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
-            >
+            <Button className="rounded-lg bg-[#D8DFD4] px-14 py-3 text-[#809671] shadow-lg transition-all duration-300 hover:scale-105 hover:bg-[#D8DFD4] md:text-lg">
               Get Started
             </Button>
           </Link>
         </div>
-
 
         {/* Image content */}
         <div className="flex h-auto w-full items-end justify-center overflow-hidden lg:order-1">
@@ -62,7 +63,7 @@ export default function Home() {
             src="/images/main.png"
             width={600}
             height={761}
-            alt="nigga-listening-music"
+            alt="family_with_gifts"
             className="w-full max-w-[360px] object-cover object-top lg:max-w-[420px] xl:max-w-[460px]"
           />
         </div>
@@ -220,7 +221,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="order-1 w-full bg-[#ffdd99] md:order-2">
+        <div className="order-1 w-full bg-[#B3B792] md:order-2">
           <div className="w-full max-w-[720px] space-y-6 p-8">
             <div className="space-y-4">
               <Text weight={700} transform="uppercase" color="blue">

@@ -121,7 +121,7 @@ export default function NavMobile({
                 href="/cart"
                 className="flex items-center justify-between border-b border-[#E8ECEF] py-4"
               >
-                <span className="font-inter text-sm font-medium text-[#141718]">
+                <span className="font-inter text-sm font-medium text-[#f4f4f4]">
                   Wishlist
                 </span>
 

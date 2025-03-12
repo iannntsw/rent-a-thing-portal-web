@@ -94,7 +94,7 @@ export default function NavLinks() {
         <li
           key={link.id}
           className={cn(
-            "font-inter text-sm font-medium text-[#141718] hover:opacity-100",
+            "font-inter text-sm font-medium text-[#f4f4f4] hover:opacity-100",
             pathname !== link.path && "opacity-70",
           )}
         >
