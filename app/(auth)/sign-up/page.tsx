@@ -1,22 +1,48 @@
 "use client";
 
-// package
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
-// ui
 import Text from "@/ui/text";
 import Button from "@/ui/button";
-
-// form
 import Input from "@/form/input";
-
-// lib
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { signUp } from "lib/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
-  const [isChecked, setIsChecked] = useState(false);
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    phoneNumber: "",
+    userType: "CUSTOMER", // default value
+    profilePicture: "", // optional, can leave empty
+  });
+  const [error, setError] = useState("");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const response = await signUp(formData);
+      console.log("Success: ", response);
+      router.push("/sign-in");
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+    }
+  };
+
   return (
     <div className="relative bg-[#F3F5F7] lg:min-h-screen">
       <div
@@ -36,9 +62,8 @@ export default function Page() {
             weight={500}
             className="absolute left-0 top-8 w-full text-center"
           >
-            Rent-A-Thing
+            Rent A Thing
           </Text>
-
           <Image
             src="/images/auth.png"
             width={2000}
@@ -48,13 +73,16 @@ export default function Page() {
           />
         </div>
 
-        <div className="flex justify-center bg-white lg:rounded-r-lg">
+        <form
+          onSubmit={handleSubmit}
+          className="flex justify-center bg-white lg:rounded-r-lg"
+        >
           <div
             className={cn([
               "w-full",
               "flex flex-col gap-8 lg:justify-center",
               "px-8 py-10 lg:px-[88px]",
-              "sm:max-w-[480px] md:max-w-[520px] lg:max-w-[560px] lg:max-w-[560px]",
+              "sm:max-w-[480px] md:max-w-[520px] lg:max-w-[560px]",
             ])}
           >
             <div className="space-y-6">
@@ -63,62 +91,78 @@ export default function Page() {
               </h1>
               <Text weight={400} color="gray">
                 Already have an account?{" "}
-                <span className="font-semibold text-black hover:underline">
+                <span className="font-semibold text-[#38CB89] hover:underline">
                   <Link href="/sign-in">Sign In</Link>
                 </span>
               </Text>
             </div>
-
+            {error && (
+              <div className="rounded-md border border-red-400 bg-red-100 p-4 text-sm text-red-700">
+                {error}
+              </div>
+            )}
             <div className="space-y-8">
-              <div className="border-b border-[#E8ECEF] pb-2 focus-within:border-[#141718]">
-                <Input intent="secondary" type="text" placeholder="Your name" />
-              </div>
-              <div className="border-b border-[#E8ECEF] pb-2 focus-within:border-[#141718]">
-                <Input intent="secondary" type="text" placeholder="Username" />
-              </div>
-              <div className="border-b border-[#E8ECEF] pb-2 focus-within:border-[#141718]">
+              <div className="border-b border-[#E8ECEF] pb-2">
                 <Input
                   intent="secondary"
+                  name="firstName"
+                  type="text"
+                  required={true}
+                  placeholder="First Name"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="border-b border-[#E8ECEF] pb-2">
+                <Input
+                  intent="secondary"
+                  name="lastName"
+                  type="text"
+                  required={true}
+                  placeholder="Last Name"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="border-b border-[#E8ECEF] pb-2">
+                <Input
+                  intent="secondary"
+                  name="username"
+                  type="text"
+                  required={true}
+                  placeholder="Username"
+                  value={formData.username}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="border-b border-[#E8ECEF] pb-2">
+                <Input
+                  intent="secondary"
+                  name="email"
                   type="email"
+                  required={true}
                   placeholder="Email address"
+                  value={formData.email}
+                  onChange={handleChange}
                 />
               </div>
-              <div className="border-b border-[#E8ECEF] pb-2 focus-within:border-[#141718]">
+              <div className="border-b border-[#E8ECEF] pb-2">
                 <Input
                   intent="secondary"
-                  type="password"
-                  placeholder="Password"
+                  name="phoneNumber"
+                  type="text"
+                  required={true}
+                  placeholder="Phone Number"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
                 />
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <input 
-                  type="checkbox"
-                  id="terms"
-                  className="h-6 w-6 accent-black cursor-pointer rounded-md border border-[#6C7275]"
-                  checked={isChecked}
-                  onChange={() => setIsChecked(!isChecked)}
-                />
-                <label htmlFor="terms" className="cursor-pointer">
-                  <Text
-                    size="xs"
-                    weight={400}
-                    color="gray"
-                    className="md:text-sm"
-                  >
-                    I agree with{" "}
-                    <span className="font-semibold text-[#141718]">Privacy Policy</span> and{" "}
-                    <span className="font-semibold text-[#141718]">Terms of Use</span>
-                  </Text>
-                </label>
               </div>
             </div>
-
-            <Button width="full" className="py-2.5" disabled={!isChecked}>
+            <Button width="full" className="py-2.5" type="submit">
               Sign Up
             </Button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
