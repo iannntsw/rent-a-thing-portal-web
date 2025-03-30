@@ -1,3 +1,5 @@
+"use client";
+
 // package
 import Link from "next/link";
 import Image from "next/image";
@@ -21,8 +23,18 @@ import {
 
 // data
 import products from "@/data/product.json";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.replace("/sign-in");
+    }
+  }, []);
   return (
     <>
       {/* Hero section */}

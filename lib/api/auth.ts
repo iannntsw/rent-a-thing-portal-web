@@ -1,5 +1,3 @@
-// lib/api/auth.ts
-
 export async function signUp(data: any) {
   console.log(process.env.NEXT_PUBLIC_BACKEND_API)
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/createUser`, {
@@ -18,8 +16,6 @@ export async function signUp(data: any) {
   return res.json();
 }
 
-// lib/api/auth.ts
-
 export async function signInUser(data: { email: string; password: string }) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/login`, {
     method: "POST",
@@ -35,3 +31,13 @@ export async function signInUser(data: { email: string; password: string }) {
   return await res.json();
 }
 
+export function handleLogout(router?: any) {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("token");
+    if (router) {
+      router.replace("/sign-in");
+    } else {
+      window.location.href = "/sign-in";
+    }
+  }
+}

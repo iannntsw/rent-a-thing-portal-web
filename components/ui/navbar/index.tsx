@@ -15,6 +15,7 @@ import {
 import NavLinks from "@/ui/navbar/navLinks";
 import NavMobile from "@/ui/navbar/navMobile";
 import PromoSection from "@/ui/promo";
+import { useRouter } from "next/navigation";
 
 // hooks
 import { useRootContext } from "@/hooks/rootContext";
@@ -25,9 +26,11 @@ import { cn } from "@/lib/utils";
 interface NavbarProps {}
 
 const Navbar: React.FC<NavbarProps> = () => {
+  const router = useRouter();
   const isRootPage = useRootContext();
   const [open, setOpen] = useState<boolean>(false);
   const [scroll, setScroll] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleOnScroll = () => {
     window.scrollY >= 32 ? setScroll(true) : setScroll(false);
@@ -37,6 +40,11 @@ const Navbar: React.FC<NavbarProps> = () => {
     window.addEventListener("scroll", handleOnScroll);
 
     return () => window.removeEventListener("scroll", handleOnScroll);
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
   }, []);
 
   return (
@@ -70,6 +78,27 @@ const Navbar: React.FC<NavbarProps> = () => {
               count={2}
               className={cn(isRootPage ? "text-[#FFAB00]" : "text-white")}
             />
+
+            {/* ✅ Add Login Button */}
+            {!isAuthenticated ? (
+              <button
+                onClick={() => router.push("/sign-in")}
+                className="ml-2 rounded-md bg-black px-4 py-1.5 text-sm font-medium text-white transition hover:bg-gray-900"
+              >
+                Sign In
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  setIsAuthenticated(false);
+                  router.push("/sign-in");
+                }}
+                className="ml-2 rounded-md bg-red-500 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-red-600"
+              >
+                Logout
+              </button>
+            )}
           </div>
 
           {/* mobile navbar  */}
