@@ -15,29 +15,29 @@ import Input from "@/form/input";
 
 // lib
 import { cn } from "@/lib/utils";
+import { signInUser } from "@/lib/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    setError("");
 
-    if (res.ok) {
-      console.log("Signed in successfully!");
-      // Redirect if needed
-    } else {
-      console.log("Invalid credentials");
+    try {
+      const response = await signInUser({ email, password });
+      console.log("Logged in:", response);
+      router.push("/");
+    } catch (err: any) {
+      setError(err.message || "Invalid credentials");
     }
   };
-
   return (
-    <div className="relative bg-[#F3F5F7] lg:min-h-screen flex items-center justify-center">
+    <div className="relative flex items-center justify-center bg-[#F3F5F7] lg:min-h-screen">
       <div
         className={cn([
           "grid lg:grid-cols-2",
@@ -48,7 +48,6 @@ export default function Page() {
           "lg:absolute lg:inset-0 lg:m-auto",
         ])}
       >
-
         <div className="relative flex items-center justify-center bg-[#F3F5F7] p-8 pt-20 lg:h-full">
           <Text
             family="poppins"
@@ -75,7 +74,7 @@ export default function Page() {
               "w-full",
               "flex flex-col gap-8 lg:justify-center",
               "px-8 py-10 lg:px-[88px]",
-              "sm:max-w-[480px] md:max-w-[520px] lg:max-w-[560px] lg:max-w-[560px]",
+              "sm:max-w-[480px] md:max-w-[520px] lg:max-w-[560px]",
             ])}
           >
             <div className="space-y-6">
@@ -91,6 +90,11 @@ export default function Page() {
             </div>
 
             <form onSubmit={handleSignIn} className="space-y-8">
+              {error && (
+                <div className="rounded-md border border-red-400 bg-red-100 p-4 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
               <div className="border-b border-[#E8ECEF] pb-2 focus-within:border-[#141718]">
                 <Input
                   intent="secondary"
@@ -112,12 +116,15 @@ export default function Page() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <input 
+                  <input
                     type="checkbox"
                     id="remember-me"
-                    className="h-6 w-6 accent-black cursor-pointer rounded-md border border-[#6C7275]"
+                    className="h-6 w-6 cursor-pointer rounded-md border border-[#6C7275] accent-black"
                   />
-                  <label htmlFor="remember-me" className="text-gray-700 text-sm">
+                  <label
+                    htmlFor="remember-me"
+                    className="text-sm text-gray-700"
+                  >
                     Remember me
                   </label>
                 </div>
@@ -126,7 +133,7 @@ export default function Page() {
                   weight={600}
                   size="xs"
                   color="black/800"
-                  className="md:text-sm hover:underline"
+                  className="hover:underline md:text-sm"
                 >
                   <Link href="/forgot-password">Forgot password?</Link>
                 </Text>
@@ -136,23 +143,25 @@ export default function Page() {
                 Sign In
               </Button>
             </form>
-          
-            <div className="relative flex items-center justify-center my-4">
-                <div className="w-full h-[1px] bg-gray-300"></div>
-                <span className="absolute bg-white px-4 text-gray-500">OR</span>
+
+            <div className="relative my-4 flex items-center justify-center">
+              <div className="h-[1px] w-full bg-gray-300"></div>
+              <span className="absolute bg-white px-4 text-gray-500">OR</span>
             </div>
 
             <button
-                onClick={() => signIn("google")}
-                className="flex items-center justify-center gap-3 border border-gray-300 rounded-lg px-4 py-2 w-full hover:bg-gray-100 transition"
-              >
-                <Image
-                  src="/images/google.png"
-                  alt="Google"
-                  width={20}
-                  height={20}
-                />
-                <span className="text-gray-700 font-medium">Sign in with Google</span>
+              onClick={() => signIn("google")}
+              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-100"
+            >
+              <Image
+                src="/images/google.png"
+                alt="Google"
+                width={20}
+                height={20}
+              />
+              <span className="font-medium text-gray-700">
+                Sign in with Google
+              </span>
             </button>
           </div>
         </div>
