@@ -16,6 +16,7 @@ export default function Page() {
     firstName: "",
     lastName: "",
     username: "",
+    password: "",
     email: "",
     phoneNumber: "",
     userType: "CUSTOMER", // default value
@@ -132,6 +133,17 @@ export default function Page() {
                   required={true}
                   placeholder="Username"
                   value={formData.username}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="border-b border-[#E8ECEF] pb-2">
+                <Input
+                  intent="secondary"
+                  name="password"
+                  type="text"
+                  required={true}
+                  placeholder="Password"
+                  value={formData.password}
                   onChange={handleChange}
                 />
               </div>
