@@ -24,16 +24,31 @@ import {
 // data
 import products from "@/data/product.json";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { fetchAllListings } from "@/lib/api/listings";
 
 export default function Home() {
   const router = useRouter();
+  const [newArrivals, setNewArrivals] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       router.replace("/sign-in");
     }
+
+    fetchAllListings()
+      .then((data) => {
+        const arrivals = data
+          .sort(
+            (a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
+        setNewArrivals(arrivals);
+      })
+      .catch((err) => {
+        console.error("Error loading products:", err);
+      });
   }, []);
   return (
     <>
@@ -45,28 +60,32 @@ export default function Home() {
         {/* Text content */}
         <div className="flex flex-col items-center gap-6 p-10 sm:max-w-[600px] md:max-w-[600px] md:py-20 lg:order-2 lg:max-w-none lg:items-start lg:p-0">
           <div className="space-y-4 text-center lg:text-left">
-            <Heading as="h1" intent="hero-section" className="text-4xl font-bold leading-tight">
-              Why buy when you can 
+            <Heading
+              as="h1"
+              intent="hero-section"
+              className="text-4xl font-bold leading-tight"
+            >
+              Why buy when you can
               <span className="bg-gradient-to-r from-[#377DFF] to-[#00C2FF] bg-clip-text text-transparent">
-                {" "}rent?
+                {" "}
+                rent?
               </span>
             </Heading>
-            
-            <Text className="md:text-lg lg:text-l text-gray-700 ml-2">
+
+            <Text className="lg:text-l ml-2 text-gray-700 md:text-lg">
               Rent what you need, when you need it — hassle-free.
             </Text>
           </div>
 
           <Link href="/sign-up">
-            <Button 
+            <Button
               fontSize="sm"
-              className="px-14 py-3 md:text-lg bg-[#377DFF] hover:bg-[#0057D9] text-white rounded-lg shadow-lg transition-all duration-300 hover:scale-105"
+              className="rounded-lg bg-[#377DFF] px-14 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-[#0057D9] md:text-lg"
             >
               Get Started
             </Button>
           </Link>
         </div>
-
 
         {/* Image content */}
         <div className="flex h-auto w-full items-end justify-center overflow-hidden lg:order-1">
@@ -92,7 +111,7 @@ export default function Home() {
           </Heading>
 
           {/* catalog product slider */}
-          <CatalogSlider />
+          <CatalogSlider products={newArrivals}/>
         </div>
       </SectionLayout>
 
@@ -186,134 +205,6 @@ export default function Home() {
         </div>
       </SectionLayout>
 
-      {/* Best seller section */}
-      <SectionLayout>
-        <div className="space-y-4 px-8 py-10 sm:space-y-8 md:space-y-12 lg:pb-24">
-          <Heading
-            as="h2"
-            intent="base-section"
-            className="text-center md:text-left"
-          >
-            Best Seller
-          </Heading>
-
-          <div className="grid grid-cols-2 gap-x-2 gap-y-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-4 lg:gap-y-8 xl:grid-cols-5">
-            {products.map((product) => (
-              <ProductCard.Root key={product.id} data={product}>
-                <ProductCard.Thumbnail>
-                  <ProductCard.ThumbnailBadge>
-                    <ProductCard.Badge>new</ProductCard.Badge>
-                    <ProductCard.WishlistButton />
-                  </ProductCard.ThumbnailBadge>
-
-                  <ProductCard.Image />
-                </ProductCard.Thumbnail>
-
-                <ProductCard.Content>
-                  <ProductCard.Ratings />
-                  <ProductCard.Name />
-                  <ProductCard.Price />
-                </ProductCard.Content>
-              </ProductCard.Root>
-            ))}
-          </div>
-        </div>
-      </SectionLayout>
-
-      {/* Promotion section */}
-      <div className="grid overflow-hidden md:grid-cols-2 lg:h-full lg:max-h-[500px] lg:place-items-center">
-        <div className="w-full justify-end bg-gray-400 md:flex">
-          <Image
-            src="/images/promotion-card.png"
-            width={1250}
-            height={1080}
-            alt="promotion-card"
-            className="h-auto w-full object-cover lg:w-[460px]"
-          />
-        </div>
-
-        <div className="order-1 w-full bg-[#ffdd99] md:order-2">
-          <div className="w-full max-w-[720px] space-y-6 p-8">
-            <div className="space-y-4">
-              <Text weight={700} transform="uppercase" color="blue">
-                promotion
-              </Text>
-              <Heading as="h2" intent="base-section">
-                Hurry up! 40% OFF
-              </Heading>
-              <Text size="sm">Thousands of high tech are waiting for you</Text>
-            </div>
-            <div className="space-y-3">
-              <Text>Offer expires in:</Text>
-              <div className="flex gap-4">
-                <div className="w-fit">
-                  <div className="flex h-[60px] w-[60px] items-center justify-center bg-white">
-                    <Text
-                      size="3xl"
-                      weight={500}
-                      family="poppins"
-                      color="black/800"
-                    >
-                      02
-                    </Text>
-                  </div>
-                  <Text size="xs" color="black/800" className="text-center">
-                    Days
-                  </Text>
-                </div>
-                <div className="w-fit">
-                  <div className="flex h-[60px] w-[60px] items-center justify-center bg-white">
-                    <Text
-                      size="3xl"
-                      weight={500}
-                      family="poppins"
-                      color="black/800"
-                    >
-                      12
-                    </Text>
-                  </div>
-                  <Text size="xs" color="black/800" className="text-center">
-                    Hours
-                  </Text>
-                </div>
-                <div className="w-fit">
-                  <div className="flex h-[60px] w-[60px] items-center justify-center bg-white">
-                    <Text
-                      size="3xl"
-                      weight={500}
-                      family="poppins"
-                      color="black/800"
-                    >
-                      45
-                    </Text>
-                  </div>
-                  <Text size="xs" color="black/800" className="text-center">
-                    Minutes
-                  </Text>
-                </div>
-                <div className="w-fit">
-                  <div className="flex h-[60px] w-[60px] items-center justify-center bg-white">
-                    <Text
-                      size="3xl"
-                      weight={500}
-                      family="poppins"
-                      color="black/800"
-                    >
-                      05
-                    </Text>
-                  </div>
-                  <Text size="xs" color="black/800" className="text-center">
-                    Seconds
-                  </Text>
-                </div>
-              </div>
-            </div>
-            <Button fontSize="sm" className="py-1.5 md:text-base">
-              Shop now
-            </Button>
-          </div>
-        </div>
-      </div>
 
       {/* Features section */}
       <SectionLayout>

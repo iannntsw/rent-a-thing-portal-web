@@ -494,3 +494,53 @@ export const YoutubeIcon: React.FC<SVGComponentProps> = ({
     </svg>
   );
 };
+
+export const BellIcon: React.FC<SVGComponentProps> = ({ stroke, className }) => {
+  return (
+    <svg
+      className={cn(className)}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M15 17H9M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 14 3 16 3 16H21C21 16 18 14 18 8Z"
+        stroke={cn(stroke ? stroke : "#141718")}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M13.73 21C13.5542 21.3031 13.3015 21.5545 13 21.7294C12.6985 21.9042 12.3589 21.9961 12.0125 21.9961C11.6661 21.9961 11.3265 21.9042 11.025 21.7294C10.7235 21.5545 10.4708 21.3031 10.295 21"
+        stroke={cn(stroke ? stroke : "#141718")}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
+export const ChatIcon: React.FC<SVGComponentProps> = ({ stroke, className }) => {
+  return (
+    <svg
+      className={cn(className)}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M21 11.5C21 6.806 16.9706 3 12 3C7.02944 3 3 6.806 3 11.5C3 13.3872 3.74667 15.1319 4.97738 16.5186C5.17223 16.7423 5.25034 17.0516 5.18664 17.3447L4.60187 20.0357C4.47013 20.6464 5.10317 21.1306 5.65936 20.8402L8.4931 19.3523C8.63344 19.2784 8.79101 19.2381 8.95153 19.2348C9.08303 19.2322 9.21424 19.2385 9.34327 19.2537C10.1883 19.3556 11.0855 19.4041 12 19.4041C16.9706 19.4041 21 15.7003 21 11.5Z"
+        stroke={cn(stroke ? stroke : "#141718")}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
+

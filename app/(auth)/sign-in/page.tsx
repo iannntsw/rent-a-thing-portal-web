@@ -30,8 +30,8 @@ export default function Page() {
 
     try {
       const response = await signInUser({ email, password });
-      localStorage.setItem("token", response.accessToken); // Store token
-      console.log("Logged in:", response);
+      localStorage.setItem("token", response.accessToken);
+      localStorage.setItem("userId", response.user.userId);
       router.push("/");
     } catch (err: any) {
       setError(err.message || "Invalid credentials");

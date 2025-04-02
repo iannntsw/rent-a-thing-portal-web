@@ -21,17 +21,15 @@ import {
 
 export type ProductDataProps = {
   data: {
-    id: number;
-    image: {
-      src: string;
-      alt: string;
-    };
-    name: string;
-    rating: number;
-    price: number;
+    listingId: string;
+    title: string;
+    pricePerDay: number;
     description: string;
+    images: string; // JSON stringified array
+    rating?: number; // optional, default to 5
   };
 };
+
 
 interface RootProps
   extends React.HTMLAttributes<HTMLDivElement>,
