@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import RentForm from "@/components/form/create-listing-form";
+import { useRouter } from "next/navigation";
 
 export default function RentPage() {
   const [email, setEmail] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -15,6 +17,8 @@ export default function RentPage() {
       } catch (err) {
         console.error("Invalid token");
       }
+    } else {
+      router.replace("/sign-in");
     }
   }, []);
 

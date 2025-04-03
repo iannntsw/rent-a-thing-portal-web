@@ -18,6 +18,13 @@ interface ListingPageProps {
 
 export default function ListingPage({ params }: ListingPageProps) {
   const router = useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.replace("/sign-in");
+    }
+  }, []);
+  
   const [listing, setListing] = useState<any>(null);
   const [currentUserId, setCurrentUserId] = useState<any>(null);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({

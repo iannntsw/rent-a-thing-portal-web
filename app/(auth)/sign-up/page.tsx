@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Text from "@/ui/text";
@@ -12,6 +12,12 @@ import { useRouter } from "next/navigation";
 
 export default function Page() {
   const router = useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/");
+    }
+  }, []);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",

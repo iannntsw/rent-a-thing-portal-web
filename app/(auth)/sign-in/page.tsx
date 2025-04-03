@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,6 +18,13 @@ export default function Page() {
   const [error, setError] = useState("");
   const router = useRouter();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/"); // redirect to home or dashboard
+    }
+  }, []);
+
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
@@ -27,6 +34,7 @@ export default function Page() {
       localStorage.setItem("token", response.accessToken);
       localStorage.setItem("userId", response.user.userId);
       localStorage.setItem("userEmail", response.user.email);
+      localStorage.setItem("username", response.user.username);
       await signInWithCustomToken(auth, response.firebaseToken);
       router.push("/");
     } catch (err: any) {

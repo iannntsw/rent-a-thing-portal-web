@@ -1,13 +1,7 @@
 "use client";
-
-// package
 import Link from "next/link";
 import Image from "next/image";
-
-// layouts
 import SectionLayout from "@/layouts/sectionLayout";
-
-// ui
 import Button from "@/ui/button";
 import Heading from "@/ui/head";
 import Text from "@/ui/text";
@@ -20,9 +14,6 @@ import {
   LockIcon,
   MoneyIcon,
 } from "@/ui/assets/svg";
-
-// data
-import products from "@/data/product.json";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchAllListings } from "@/lib/api/listings";
