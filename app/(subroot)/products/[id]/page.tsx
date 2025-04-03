@@ -3,11 +3,12 @@
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
 import { getListingById } from "@/lib/api/listings";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { createOrGetChat } from "@/lib/api/messages";
 
 interface ListingPageProps {
   params: {
@@ -16,6 +17,7 @@ interface ListingPageProps {
 }
 
 export default function ListingPage({ params }: ListingPageProps) {
+  const router = useRouter();
   const [listing, setListing] = useState<any>(null);
   const [currentUserId, setCurrentUserId] = useState<any>(null);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
@@ -24,6 +26,22 @@ export default function ListingPage({ params }: ListingPageProps) {
     },
     mode: "snap",
   });
+
+  const handleChatNow = async () => {
+    const renterId = listing.user.userId;
+    const renteeId = localStorage.getItem("userId");
+    if (!renteeId) {
+      alert("Please log in to start a chat.");
+      return;
+    }
+
+    const { chatId } = await createOrGetChat(
+      listing.listingId,
+      renterId,
+      renteeId,
+    );
+    router.push(`/chat/${chatId}`);
+  };
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -52,9 +70,9 @@ export default function ListingPage({ params }: ListingPageProps) {
   return (
     <div className="mx-auto max-w-6xl p-6 lg:grid lg:grid-cols-3 lg:gap-10">
       {/* Left content */}
-      <div className="lg:col-span-2 space-y-6">
+      <div className="space-y-6 lg:col-span-2">
         {/* Image Carousel */}
-        <div className="relative w-full max-w-xl mx-auto">
+        <div className="relative mx-auto w-full max-w-xl">
           <button
             onClick={() => instanceRef.current?.prev()}
             className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-1 shadow-md hover:bg-gray-100"
@@ -68,9 +86,15 @@ export default function ListingPage({ params }: ListingPageProps) {
             <ChevronRight className="h-5 w-5" />
           </button>
 
-          <div ref={sliderRef} className="keen-slider h-[400px] w-full overflow-hidden rounded-md">
+          <div
+            ref={sliderRef}
+            className="keen-slider h-[400px] w-full overflow-hidden rounded-md"
+          >
             {images.map((src, index) => (
-              <div key={index} className="keen-slider__slide flex items-center justify-center">
+              <div
+                key={index}
+                className="keen-slider__slide flex items-center justify-center"
+              >
                 <Image
                   src={src}
                   alt={`Listing image ${index + 1}`}
@@ -84,17 +108,21 @@ export default function ListingPage({ params }: ListingPageProps) {
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold mb-2">{listing.title}</h1>
-          <p className="text-xl font-semibold text-red-600">S${listing.pricePerDay} / day</p>
+          <h1 className="mb-2 text-2xl font-bold">{listing.title}</h1>
+          <p className="text-xl font-semibold text-red-600">
+            S${listing.pricePerDay} / day
+          </p>
         </div>
 
-        <div className="border-t pt-4 space-y-2">
-          <h2 className="font-semibold text-lg">Details</h2>
-          <div className="text-sm text-gray-700 space-y-1">
+        <div className="space-y-2 border-t pt-4">
+          <h2 className="text-lg font-semibold">Details</h2>
+          <div className="space-y-1 text-sm text-gray-700">
             <h3>Category: {listing.category}</h3>
             <h3>Location: {listing.location}</h3>
             <h3>
-              Available: {new Date(listing.availableFrom * 1000).toLocaleDateString()} - {new Date(listing.availableUntil * 1000).toLocaleDateString()}
+              Available:{" "}
+              {new Date(listing.availableFrom * 1000).toLocaleDateString()} -{" "}
+              {new Date(listing.availableUntil * 1000).toLocaleDateString()}
             </h3>
             <h3>Description: {listing.description}</h3>
           </div>
@@ -102,35 +130,61 @@ export default function ListingPage({ params }: ListingPageProps) {
       </div>
 
       {/* Right content (Seller Card) */}
-      <div className="mt-10 lg:mt-0 border rounded-md p-6 shadow-md bg-white space-y-4">
+      <div className="mt-10 space-y-4 rounded-md border bg-white p-6 shadow-md lg:mt-0">
         <div className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-gray-200 overflow-hidden">
+          <div className="h-14 w-14 overflow-hidden rounded-full bg-gray-200">
             {/* Placeholder for profile picture */}
             {listing.user?.profilePicture ? (
-              <Image src={listing.user.profilePicture} alt="Profile" width={56} height={56} className="rounded-full object-cover" />
+              <Image
+                src={listing.user.profilePicture}
+                alt="Profile"
+                width={56}
+                height={56}
+                className="rounded-full object-cover"
+              />
             ) : null}
           </div>
           <div>
             <p className="font-semibold">@{listing.user?.username}</p>
-            <p className="text-sm text-gray-600">Joined: {new Date(listing.user?.createdAt).toLocaleDateString()}</p>
+            <p className="text-sm text-gray-600">
+              Joined: {new Date(listing.user?.createdAt).toLocaleDateString()}
+            </p>
           </div>
         </div>
 
         {isOwner ? (
-          <button className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Edit Listing</button>
+          <button className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+            Edit Listing
+          </button>
         ) : (
-          <button className="w-full rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700">Chat Now</button>
+          <button
+            onClick={handleChatNow}
+            className="w-full rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+          >
+            Chat Now
+          </button>
         )}
 
         <div className="border-t pt-4">
           <p className="text-sm font-medium">Price</p>
           <p className="text-xl font-bold">S${listing.pricePerDay}</p>
-          <button className="mt-2 w-full rounded-md border border-gray-300 py-1.5 font-medium hover:bg-gray-50">Make Offer</button>
+          <button className="mt-2 w-full rounded-md border border-gray-300 py-1.5 font-medium hover:bg-gray-50">
+            Make Offer
+          </button>
         </div>
 
-        <div className="text-xs text-gray-600 space-y-2 pt-4 border-t">
-          <p><strong>Returns and refunds</strong><br />Depends on the seller's decision. Not covered by Buyer Protection.</p>
-          <p><strong>Safety policy</strong><br />Pay only at the meet-up. Transferring money directly to strangers puts you at risk of e-commerce scams.</p>
+        <div className="space-y-2 border-t pt-4 text-xs text-gray-600">
+          <p>
+            <strong>Returns and refunds</strong>
+            <br />
+            Depends on the seller's decision. Not covered by Buyer Protection.
+          </p>
+          <p>
+            <strong>Safety policy</strong>
+            <br />
+            Pay only at the meet-up. Transferring money directly to strangers
+            puts you at risk of e-commerce scams.
+          </p>
         </div>
       </div>
     </div>

@@ -1,22 +1,16 @@
 "use client";
-
-// package
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
-
-// ui
 import Text from "@/ui/text";
 import Button from "@/ui/button";
-
-// form
 import Input from "@/form/input";
-
-// lib
 import { cn } from "@/lib/utils";
 import { signInUser } from "@/lib/api/auth";
 import { useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase";
+import { signInWithCustomToken } from "firebase/auth";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -32,6 +26,8 @@ export default function Page() {
       const response = await signInUser({ email, password });
       localStorage.setItem("token", response.accessToken);
       localStorage.setItem("userId", response.user.userId);
+      localStorage.setItem("userEmail", response.user.email);
+      await signInWithCustomToken(auth, response.firebaseToken);
       router.push("/");
     } catch (err: any) {
       setError(err.message || "Invalid credentials");
