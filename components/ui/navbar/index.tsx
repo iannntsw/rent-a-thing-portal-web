@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
       {!open && <PromoSection />}
       <div
         className={cn(
-          "sticky top-0 z-[100]",
+          "sticky top-0 z-[40]",
           isRootPage ? "bg-[#ffc95c]" : "bg-white",
           scroll && "bg-white shadow transition-colors duration-200 ease-in"
         )}

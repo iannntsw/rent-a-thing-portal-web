@@ -284,9 +284,6 @@ export default function Home() {
             <Text size="sm">
               Follow us on social media for more discount & promotions
             </Text>
-            <Text size="xl" weight={500} family="poppins" color="gray">
-              @kupingplug_official
-            </Text>
           </div>
         </div>
       </SectionLayout>

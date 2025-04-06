@@ -15,7 +15,7 @@ const Footer = () => {
         <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-0">
           <div className="flex flex-col items-center gap-4 lg:flex-row lg:gap-0">
             <h3 className="font-poppins text-2xl font-medium text-white lg:border-r lg:border-[#6C7275] lg:pr-8">
-              Kupingplug<span className="text-[#6C7275]">.</span>
+            RentAThing<span className="text-[#6C7275]">.</span>
             </h3>
             <span className="h-[1px] w-8 rounded-full bg-[#6C7275] lg:hidden"></span>
             <Text size="sm" color="white/900" className="lg:pl-8">
@@ -62,15 +62,6 @@ const Footer = () => {
                 Term of Use
               </Text>
             </div>
-
-            <Text
-              family="poppins"
-              size="xs"
-              color="white/800"
-              className="text-center lg:order-1 lg:text-left"
-            >
-              Copyright © 2023 Kupingplug. All rights reserved
-            </Text>
           </div>
         </div>
       </div>

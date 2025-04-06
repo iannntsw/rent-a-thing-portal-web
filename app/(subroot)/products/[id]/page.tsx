@@ -18,6 +18,7 @@ interface ListingPageProps {
 
 export default function ListingPage({ params }: ListingPageProps) {
   const router = useRouter();
+  const listingId = params.id;
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -47,7 +48,7 @@ export default function ListingPage({ params }: ListingPageProps) {
       renterId,
       renteeId,
     );
-    router.push(`/chat/${chatId}`);
+    router.push(`/chat/${chatId}/${listingId}`);
   };
 
   useEffect(() => {
@@ -136,11 +137,9 @@ export default function ListingPage({ params }: ListingPageProps) {
         </div>
       </div>
 
-      {/* Right content (Seller Card) */}
       <div className="mt-10 space-y-4 rounded-md border bg-white p-6 shadow-md lg:mt-0">
         <div className="flex items-center gap-4">
           <div className="h-14 w-14 overflow-hidden rounded-full bg-gray-200">
-            {/* Placeholder for profile picture */}
             {listing.user?.profilePicture ? (
               <Image
                 src={listing.user.profilePicture}
