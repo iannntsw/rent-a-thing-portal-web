@@ -1,5 +1,3 @@
-// app/chat/[chatId]/[listingId]/page.tsx
-
 "use client";
 
 import ChatPage from "@/components/ui/chat/ChatPage";

@@ -53,7 +53,6 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {!open && <PromoSection />}
       <div
         className={cn(
           "sticky top-0 z-[40]",

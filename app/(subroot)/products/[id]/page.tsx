@@ -77,9 +77,7 @@ export default function ListingPage({ params }: ListingPageProps) {
 
   return (
     <div className="mx-auto max-w-6xl p-6 lg:grid lg:grid-cols-3 lg:gap-10">
-      {/* Left content */}
       <div className="space-y-6 lg:col-span-2">
-        {/* Image Carousel */}
         <div className="relative mx-auto w-full max-w-xl">
           <button
             onClick={() => instanceRef.current?.prev()}
