@@ -1,5 +1,4 @@
 export async function signUp(data: any) {
-  console.log(process.env.NEXT_PUBLIC_BACKEND_API)
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/createUser`, {
     method: "POST",
     headers: {

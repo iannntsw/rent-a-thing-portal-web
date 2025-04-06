@@ -110,3 +110,64 @@ export async function getLatestBooking(listingId: string, renteeEmail: string) {
     throw err;
   }
 }
+
+export async function getBookingById(bookingId: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API}/api/bookings/getBooking/${bookingId}`,
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch booking");
+    }
+    const booking = await res.json();
+    return booking;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function createPayment(paymentDetails: {
+  bookingId: string;
+  amount: number;
+  paymentMethod: string;
+  status: string;
+}) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/payments/createPayment`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(paymentDetails),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to create payment");
+  }
+
+  return res.json();
+}
+
+export async function createReview(payload: {
+  listingId: string;
+  reviewerId: string;
+  recipientId: string;
+  rating: number;
+  reviewText: string;
+  bookingId?: string;
+}) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/reviews/createReview`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Failed to create review");
+  }
+
+  return await res.json();
+}

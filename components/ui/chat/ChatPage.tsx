@@ -25,6 +25,7 @@ import {
   updateBooking,
 } from "@/lib/api/bookings";
 import { getListingById } from "@/lib/api/listings";
+import ReviewDialog from "../review-dialog";
 
 export default function ChatPage({
   listingId,
@@ -45,6 +46,22 @@ export default function ChatPage({
   const [listingOwnerId, setListingOwnerId] = useState<string | null>(null);
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
   const [latestBooking, setLatestBooking] = useState<any>(null);
+  const [showCompleteDialog, setShowCompleteDialog] = useState(false);
+  const [showReviewDialog, setShowReviewDialog] = useState(false);
+  const [reviewText, setReviewText] = useState("");
+  const [rating, setRating] = useState("");
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setShowReviewDialog(false);
+      alert("Review submitted!");
+    } catch (err) {
+      console.error("Failed to submit review:", err);
+      alert("Error submitting review");
+    }
+  };
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -121,7 +138,6 @@ export default function ChatPage({
 
     try {
       if (editingBookingId) {
-        console.log(editingBookingId);
         await updateBooking({
           bookingId: editingBookingId,
           startDate,
@@ -178,7 +194,7 @@ export default function ChatPage({
 
       await addDoc(collection(db, "conversations", convoId, "messages"), {
         sender: userEmail,
-        text: `✅ Offer accepted: ${offerText}. Please proceed to complete the payment.`,
+        text: `✅ Booking accepted: ${offerText}. Please proceed to complete the payment.`,
         type: "info",
         bookingId,
         renteeEmail,
@@ -188,7 +204,7 @@ export default function ChatPage({
       alert("Booking accepted! Payment request has been sent.");
     } catch (err) {
       console.error(err);
-      alert("Failed to accept offer");
+      alert("Failed to Booking offer");
     }
   };
 
@@ -247,10 +263,112 @@ export default function ChatPage({
       ),
   );
 
+  const handleCompleteBooking = async () => {
+    try {
+      await updateBooking({
+        bookingId: latestBooking.bookingId,
+        status: "Completed",
+      });
+
+      await addDoc(collection(db, "conversations", convoId, "messages"), {
+        sender: "System",
+        text: "✅ Booking has been marked as completed. Please consider leaving a review for each other!",
+        type: "info",
+        bookingId: latestBooking.bookingId,
+        createdAt: serverTimestamp(),
+      });
+
+      setShowCompleteDialog(false);
+      alert("Booking marked as complete. Review request sent!");
+    } catch (err) {
+      console.error("Failed to complete booking:", err);
+      alert("Something went wrong while completing the booking.");
+    }
+  };
+
   return (
     <div className="mx-auto max-w-xl space-y-4 p-4">
       <div className="flex items-center justify-between border-b pb-4">
         <h2 className="text-lg font-semibold">Chat</h2>
+        {showCompleteDialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
+              <h2 className="mb-2 text-lg font-semibold">Complete Booking</h2>
+              <p className="mb-4 text-gray-700">
+                Before completing the booking, please ensure the item has been
+                returned in good condition and both parties are satisfied.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setShowCompleteDialog(false)}
+                  className="rounded border px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCompleteBooking}
+                  className="rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+                >
+                  Complete Booking
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showReviewDialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
+              <h2 className="mb-2 text-center text-lg font-semibold">
+                Leave a Review
+              </h2>
+              <p className="mb-4 text-center text-sm text-gray-600">
+                Let the community know how your experience went!
+              </p>
+              <form
+                onSubmit={handleSubmitReview}
+                className="flex flex-col gap-3"
+              >
+                <textarea
+                  required
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Write your review..."
+                  className="w-full rounded border p-2"
+                />
+                <select
+                  required
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                  className="w-full rounded border p-2"
+                >
+                  <option value="">Rating</option>
+                  <option value="5">🌟🌟🌟🌟🌟 (5)</option>
+                  <option value="4">🌟🌟🌟🌟 (4)</option>
+                  <option value="3">🌟🌟🌟 (3)</option>
+                  <option value="2">🌟🌟 (2)</option>
+                  <option value="1">🌟 (1)</option>
+                </select>
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    className="rounded border px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setShowReviewDialog(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                  >
+                    Submit Review
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {isRenter && messages.find((m) => m.type === "offer" && m.bookingId) ? (
           (() => {
@@ -258,39 +376,62 @@ export default function ChatPage({
               .reverse()
               .find((m) => m.type === "offer" && m.bookingId);
             if (!offerMsg) return null;
-            const isAccepted =
+
+            const isPending =
               latestBooking?.bookingId === offerMsg.bookingId &&
-              latestBooking?.status === "Accepted";
-            return (
-              <button
-                onClick={() =>
-                  handleAcceptOffer(
-                    offerMsg.bookingId,
-                    offerMsg.text,
-                    offerMsg.sender,
-                  )
-                }
-                className={`mb-4 rounded px-4 py-2 text-white ${
-                  isAccepted
-                    ? "cursor-not-allowed bg-gray-400"
-                    : "bg-green-600 hover:bg-green-700"
-                }`}
-                disabled={isAccepted}
-              >
-                {isAccepted ? "Accepted" : "Accept Offer"}
-              </button>
-            );
+              latestBooking?.status === "Pending";
+
+            if (latestBooking?.status === "Confirmed") {
+              return (
+                <button
+                  className="mb-4 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+                  onClick={() => setShowCompleteDialog(true)}
+                >
+                  Complete Booking
+                </button>
+              );
+            }
+
+            if (isPending) {
+              return (
+                <button
+                  onClick={() =>
+                    handleAcceptOffer(
+                      offerMsg.bookingId,
+                      offerMsg.text,
+                      offerMsg.sender,
+                    )
+                  }
+                  className="mb-4 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                >
+                  Accept Booking
+                </button>
+              );
+            }
+
+            if (latestBooking?.status === "Completed") {
+              return (
+                <ReviewDialog
+                  listingId={listingId}
+                  reviewerId={currentUserId!}
+                  recipientId={
+                    isRenter ? latestBooking.rentee.userId : listingOwnerId!
+                  }
+                  bookingId={latestBooking.bookingId}
+                />
+              );
+            }
           })()
         ) : (
           <Dialog
             open={!!editingBookingId || undefined}
             onOpenChange={() => setEditingBookingId(null)}
           >
-            <DialogTrigger asChild>
-              <div className="flex gap-2">
+            <div className="flex gap-2">
+              <DialogTrigger asChild>
                 <button
                   className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={hasActiveBooking}
+                  disabled={hasActiveBooking && latestBooking?.status !== "Completed"}
                   onClick={() => {
                     setStartDate("");
                     setEndDate("");
@@ -300,20 +441,30 @@ export default function ChatPage({
                 >
                   Make Booking
                 </button>
+              </DialogTrigger>
 
-                {latestBooking?.status === "Accepted" && (
-                  <button
-                    className="rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
-                    onClick={() =>
-                      (window.location.href = `/payment/${latestBooking.bookingId}`)
-                    }
-                  >
-                    Complete Payment
-                  </button>
-                )}
-              </div>
-            </DialogTrigger>
+              {latestBooking?.status === "Accepted" && (
+                <button
+                  className="rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
+                  onClick={() =>
+                    (window.location.href = `/payment/${latestBooking.bookingId}?convoId=${convoId}`)
+                  }
+                >
+                  Complete Payment
+                </button>
+              )}
 
+              {latestBooking?.status === "Completed" && (
+                <ReviewDialog
+                  listingId={listingId}
+                  reviewerId={currentUserId!}
+                  recipientId={
+                    isRenter ? latestBooking.rentee.userId : listingOwnerId!
+                  }
+                  bookingId={latestBooking.bookingId}
+                />
+              )}
+            </div>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>

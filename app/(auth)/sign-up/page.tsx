@@ -43,7 +43,6 @@ export default function Page() {
 
     try {
       const response = await signUp(formData);
-      console.log("Success: ", response);
       router.push("/sign-in");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
