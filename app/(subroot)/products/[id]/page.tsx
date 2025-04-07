@@ -5,11 +5,13 @@ import "keen-slider/keen-slider.min.css";
 
 import { notFound, useRouter } from "next/navigation";
 import Image from "next/image";
-import { getListingById } from "@/lib/api/listings";
+import { deleteListing, getListingById } from "@/lib/api/listings";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createOrGetChat } from "@/lib/api/messages";
 import Link from "next/link";
+import { DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 interface ListingPageProps {
   params: {
@@ -29,6 +31,8 @@ export default function ListingPage({ params }: ListingPageProps) {
 
   const [listing, setListing] = useState<any>(null);
   const [currentUserId, setCurrentUserId] = useState<any>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
     slides: {
       perView: 1,
@@ -52,6 +56,17 @@ export default function ListingPage({ params }: ListingPageProps) {
     );
     router.push(`/chat/${chatId}/${listingId}`);
   };
+
+  const handleDelete = async () => {
+    try {
+      await deleteListing(listing.listingId);
+      alert("Listing deleted.");
+      router.push("/");
+    } catch (err) {
+      alert("Failed to delete listing.");
+    }
+  };
+  
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -164,9 +179,47 @@ export default function ListingPage({ params }: ListingPageProps) {
         </div>
 
         {isOwner ? (
-          <button className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-            Edit Listing
-          </button>
+          <div className="space-y-2">
+            <button
+              onClick={() => router.push(`/listings/edit/${listing.listingId}`)}
+              className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            >
+              Edit Listing
+            </button>
+
+            <button
+              onClick={() => setShowDeleteDialog(true)}
+              className="w-full rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+            >
+              Delete Listing
+            </button>
+
+            <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirm Deletion</DialogTitle>
+                </DialogHeader>
+                <p>
+                  Are you sure you want to delete this listing? This action
+                  cannot be undone.
+                </p>
+                <div className="mt-4 flex justify-end gap-2">
+                  <button
+                    className="rounded border px-4 py-2 hover:bg-gray-100"
+                    onClick={() => setShowDeleteDialog(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                    onClick={handleDelete}
+                  >
+                    Yes, Delete
+                  </button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         ) : (
           <button
             onClick={handleChatNow}

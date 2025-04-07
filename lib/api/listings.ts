@@ -40,3 +40,46 @@ export const getListingById = async (id: string) => {
     return null;
   }
 };
+
+export async function updateListing(listingId: string, updatedData: any) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API}/api/listings/updateListing/${listingId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      },
+    );
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || "Failed to update listing");
+    }
+
+    return await res.json();
+  } catch (err) {
+    console.error("Error updating listing:", err);
+    throw err;
+  }
+}
+
+export async function deleteListing(listingId: string) {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/listings/deleteListing/${listingId}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || "Failed to delete listing");
+    }
+    return res.ok;
+  } catch (err) {
+    console.error("Error deleting listing:", err);
+    throw err;
+  }
+}
+
