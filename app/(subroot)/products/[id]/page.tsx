@@ -48,6 +48,7 @@ export default function ListingPage({ params }: ListingPageProps) {
       listing.listingId,
       renterId,
       renteeId,
+      listing.title,
     );
     router.push(`/chat/${chatId}/${listingId}`);
   };

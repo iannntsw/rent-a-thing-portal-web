@@ -13,9 +13,9 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-export async function createOrGetChat(listingId: string, renterId: string, renteeId: string) {
+export async function createOrGetChat(listingId: string, renterId: string, renteeId: string, listingTitle: string) {
   const chatQuery = query(
-    collection(db, "chats"),
+    collection(db, "conversations"),
     where("listingId", "==", listingId),
     where("renterId", "==", renterId),
     where("renteeId", "==", renteeId)
@@ -26,10 +26,12 @@ export async function createOrGetChat(listingId: string, renterId: string, rente
     return { chatId: snapshot.docs[0].id, chatData: snapshot.docs[0].data() };
   }
 
-  const newChatRef = await addDoc(collection(db, "chats"), {
+  const newChatRef = await addDoc(collection(db, "conversations"), {
+    listingTitle,
     listingId,
     renterId,
     renteeId,
+    participants: [renterId, renteeId],
     lastMessage: "",
     updatedAt: serverTimestamp(),
   });
@@ -72,4 +74,16 @@ export async function ensureConversationExists(convoId: string, metadata: { part
     });
   }
 }
+
+export async function getAllChats(userId: string) {
+  const q = query(
+    collection(db, "conversations"),
+    where("participants", "array-contains", userId),
+    orderBy("updatedAt", "desc")
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
 

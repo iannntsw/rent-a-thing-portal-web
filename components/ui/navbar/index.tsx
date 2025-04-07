@@ -77,12 +77,9 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-2 lg:basis-1/4 lg:justify-end lg:gap-4">
             <WishlistIcon className="h-6 w-6 cursor-pointer hover:opacity-80" />
 
-            <div className="relative">
+            <Link className="relative" href={"/chat"}>
               <ChatIcon className="h-6 w-6" />
-              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                42
-              </span>
-            </div>
+            </Link>
 
             {isAuthenticated ? (
               <div className="relative">

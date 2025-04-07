@@ -422,7 +422,7 @@ export default function ChatPage({
               );
             }
           })()
-        ) : (
+        ) : !isRenter ? (
           <Dialog
             open={!!editingBookingId || undefined}
             onOpenChange={() => setEditingBookingId(null)}
@@ -501,7 +501,7 @@ export default function ChatPage({
               </button>
             </DialogContent>
           </Dialog>
-        )}
+        ) : null}
       </div>
 
       <div className="h-[300px] overflow-y-auto rounded border p-2">
