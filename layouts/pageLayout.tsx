@@ -12,12 +12,14 @@ interface PageLayoutProps {
 
 export default function PageLayout({ root, children }: PageLayoutProps) {
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <RootContextProvider root={root}>
         <Navbar />
       </RootContextProvider>
-      <main>{children}</main>
+
+      <main className="flex-grow">{children}</main>
+
       <Footer />
-    </>
+    </div>
   );
 }
