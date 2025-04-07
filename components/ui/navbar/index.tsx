@@ -12,7 +12,6 @@ import {
 } from "@/ui/assets/svg";
 import NavLinks from "@/ui/navbar/navLinks";
 import NavMobile from "@/ui/navbar/navMobile";
-import PromoSection from "@/ui/promo";
 import { useRootContext } from "@/hooks/rootContext";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +22,7 @@ const Navbar: React.FC = () => {
   const [scroll, setScroll] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleOnScroll = () => {
@@ -37,9 +37,11 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUsername = localStorage.getItem("username");
+    const userId = localStorage.getItem("userId")
     if (token) {
       setIsAuthenticated(true);
       if (storedUsername) setUsername(storedUsername);
+      if (userId) setUserId(userId)
     }
   }, []);
 
@@ -101,8 +103,8 @@ const Navbar: React.FC = () => {
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 rounded-md bg-white shadow-lg z-20">
-                    <Link
-                      href="/profile"
+                    <Link href={`/profile/${userId}`}
+
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       My Profile

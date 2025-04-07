@@ -90,7 +90,7 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
     try {
       await createListing(userEmail, payload);
       alert("Item listed successfully!");
-      // router.push("/");
+      router.push("/");
     } catch (err: any) {
       console.error(err);
       alert(

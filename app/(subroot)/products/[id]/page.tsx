@@ -9,6 +9,7 @@ import { getListingById } from "@/lib/api/listings";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createOrGetChat } from "@/lib/api/messages";
+import Link from "next/link";
 
 interface ListingPageProps {
   params: {
@@ -25,7 +26,7 @@ export default function ListingPage({ params }: ListingPageProps) {
       router.replace("/sign-in");
     }
   }, []);
-  
+
   const [listing, setListing] = useState<any>(null);
   const [currentUserId, setCurrentUserId] = useState<any>(null);
   const [sliderRef, instanceRef] = useKeenSlider<HTMLDivElement>({
@@ -149,7 +150,12 @@ export default function ListingPage({ params }: ListingPageProps) {
             ) : null}
           </div>
           <div>
-            <p className="font-semibold">@{listing.user?.username}</p>
+            <Link
+              href={`/profile/${listing.user?.userId}`}
+              className="font-semibold text-blue-600 hover:underline"
+            >
+              @{listing.user?.username}
+            </Link>
             <p className="text-sm text-gray-600">
               Joined: {new Date(listing.user?.createdAt).toLocaleDateString()}
             </p>
@@ -172,9 +178,6 @@ export default function ListingPage({ params }: ListingPageProps) {
         <div className="border-t pt-4">
           <p className="text-sm font-medium">Price</p>
           <p className="text-xl font-bold">S${listing.pricePerDay}</p>
-          <button className="mt-2 w-full rounded-md border border-gray-300 py-1.5 font-medium hover:bg-gray-50">
-            Make Offer
-          </button>
         </div>
 
         <div className="space-y-2 border-t pt-4 text-xs text-gray-600">
