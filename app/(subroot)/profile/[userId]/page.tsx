@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { getUserById, updateUserProfile } from "@/lib/api/user";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ViewProfilePage({
   params,
@@ -92,7 +93,7 @@ export default function ViewProfilePage({
         )}
       </div>
       <div className="mb-6 flex items-center gap-4">
-        <img
+        <Image
           src={user.profilePicture || "/default-avatar.png"}
           alt="Profile"
           className="h-24 w-24 rounded-full border object-cover"
@@ -131,7 +132,7 @@ export default function ViewProfilePage({
                   href={`/products/${listing.listingId}`}
                   className="flex justify-center"
                 >
-                  <img
+                  <Image
                     src={(() => {
                       try {
                         const parsed = JSON.parse(listing.images || "[]");
@@ -185,7 +186,7 @@ export default function ViewProfilePage({
           </DialogHeader>
           <div className="space-y-3">
             {previewImage && (
-              <img
+              <Image
                 src={previewImage}
                 alt="Profile Preview"
                 className="mx-auto mb-2 h-24 w-24 rounded-full border object-cover"

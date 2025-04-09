@@ -17,7 +17,14 @@ const ProductRecommendation = () => {
         {products.map((product) => (
           <ProductCard.Root
             key={product.id}
-            data={product}
+            data={{
+              listingId: String(product.id),
+              title: product.name,
+              pricePerDay: product.price,
+              description: product.description,
+              images: JSON.stringify([product.image.src]), // wrap in array and stringify
+              rating: product.rating,
+            }}
             className="w-[231px] flex-none"
           >
             <ProductCard.Thumbnail>

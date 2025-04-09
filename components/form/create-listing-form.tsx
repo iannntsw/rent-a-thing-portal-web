@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Input from "@/components/form/input";
 import { cn } from "@/lib/utils";
 import { createListing } from "@/lib/api/listings";
+import Image from "next/image";
 
 interface RentFormProps {
   userEmail: string;
@@ -223,7 +224,7 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
         <div className="flex flex-wrap gap-2 pt-2">
           {imagePreviews.map((src, idx) => (
             <div key={idx} className="relative h-20 w-20">
-              <img
+              <Image
                 src={src}
                 alt={`Preview ${idx + 1}`}
                 className="h-full w-full rounded border border-gray-300 object-cover"

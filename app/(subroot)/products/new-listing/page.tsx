@@ -20,7 +20,7 @@ export default function RentPage() {
     } else {
       router.replace("/sign-in");
     }
-  }, []);
+  }, [router]);
 
   return (
     <div className="p-6">

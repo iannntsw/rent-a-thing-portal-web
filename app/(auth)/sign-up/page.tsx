@@ -17,7 +17,7 @@ export default function Page() {
     if (token) {
       router.replace("/");
     }
-  }, []);
+  }, [router]);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -25,8 +25,8 @@ export default function Page() {
     password: "",
     email: "",
     phoneNumber: "",
-    userType: "CUSTOMER", // default value
-    profilePicture: "", // optional, can leave empty
+    userType: "CUSTOMER",
+    profilePicture: "",
   });
   const [error, setError] = useState("");
 

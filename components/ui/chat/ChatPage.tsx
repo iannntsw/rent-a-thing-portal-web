@@ -105,7 +105,7 @@ export default function ChatPage({
     };
 
     fetchLatestBooking();
-  }, [listingId, messages, isRenter]);
+  }, [listingId, messages, isRenter, userEmail]);
 
   useEffect(() => {
     const q = query(

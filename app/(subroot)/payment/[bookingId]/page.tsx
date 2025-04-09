@@ -108,7 +108,7 @@ export default function PaymentPage({
               <>
                 <h2 className="mb-4 text-lg font-semibold">Confirm Payment</h2>
                 <p className="mb-2">
-                  You're about to pay <strong>${booking.totalPrice}</strong>.
+                  You&apos;re about to pay <strong>${booking.totalPrice}</strong>.
                 </p>
                 <p className="mb-4 text-sm text-gray-600">
                   Payment method: Credit Card

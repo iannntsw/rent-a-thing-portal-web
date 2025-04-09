@@ -40,7 +40,7 @@ export default function Home() {
       .catch((err) => {
         console.error("Error loading products:", err);
       });
-  }, []);
+  }, [router]);
   return (
     <>
       {/* Hero section */}
@@ -271,7 +271,6 @@ export default function Home() {
         </div>
       </SectionLayout>
 
-      {/* Newsfeed section */}
       <SectionLayout>
         <div className="space-y-10 px-8 py-10">
           <div className="space-y-4 text-center">

@@ -21,9 +21,9 @@ export default function Page() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      router.replace("/"); // redirect to home or dashboard
+      router.replace("/");
     }
-  }, []);
+  }, [router]);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

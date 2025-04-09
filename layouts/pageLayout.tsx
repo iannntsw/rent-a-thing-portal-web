@@ -17,7 +17,9 @@ export default function PageLayout({ root, children }: PageLayoutProps) {
         <Navbar />
       </RootContextProvider>
 
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow flex flex-col">
+        <div className="flex-grow">{children}</div>
+      </main>
 
       <Footer />
     </div>

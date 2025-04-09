@@ -27,7 +27,7 @@ export default function ListingPage({ params }: ListingPageProps) {
     if (!token) {
       router.replace("/sign-in");
     }
-  }, []);
+  }, [router]);
 
   const [listing, setListing] = useState<any>(null);
   const [currentUserId, setCurrentUserId] = useState<any>(null);
@@ -238,7 +238,7 @@ export default function ListingPage({ params }: ListingPageProps) {
           <p>
             <strong>Returns and refunds</strong>
             <br />
-            Depends on the seller's decision. Not covered by Buyer Protection.
+            Depends on the seller&apos;s decision. Not covered by Buyer Protection.
           </p>
           <p>
             <strong>Safety policy</strong>
