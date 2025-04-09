@@ -181,7 +181,7 @@ export default function ListingPage({ params }: ListingPageProps) {
         {isOwner ? (
           <div className="space-y-2">
             <button
-              onClick={() => router.push(`/listings/edit/${listing.listingId}`)}
+              onClick={() => router.push(`/products/edit/${listing.listingId}`)}
               className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
             >
               Edit Listing
