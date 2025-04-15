@@ -66,7 +66,6 @@ export default function ListingPage({ params }: ListingPageProps) {
       alert("Failed to delete listing.");
     }
   };
-  
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -89,7 +88,14 @@ export default function ListingPage({ params }: ListingPageProps) {
 
   if (!listing) return null;
 
-  const images: string[] = JSON.parse(listing.images);
+  let images: string[] = [];
+
+  try {
+    images = listing.images ? JSON.parse(listing.images) : [];
+  } catch (err) {
+    console.warn("Invalid images data", err);
+    images = [];
+  }
   const isOwner = currentUserId === listing.user?.userId;
 
   return (
@@ -238,7 +244,8 @@ export default function ListingPage({ params }: ListingPageProps) {
           <p>
             <strong>Returns and refunds</strong>
             <br />
-            Depends on the seller&apos;s decision. Not covered by Buyer Protection.
+            Depends on the seller&apos;s decision. Not covered by Buyer
+            Protection.
           </p>
           <p>
             <strong>Safety policy</strong>

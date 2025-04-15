@@ -1,11 +1,17 @@
+import { authHeaders } from "../utils";
+
 export async function getUserById(userId: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/getUser/${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/getUser/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders(),
+        },
       },
-    });
+    );
 
     if (!res.ok) {
       throw new Error("Failed to fetch user profile");
@@ -27,7 +33,7 @@ export async function updateUserProfile(
     email?: string;
     profilePicture?: string;
     phoneNumber?: string;
-  }
+  },
 ) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/updateUser/${userId}`,
@@ -35,9 +41,10 @@ export async function updateUserProfile(
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        ...authHeaders(),
       },
       body: JSON.stringify(data),
-    }
+    },
   );
 
   if (!res.ok) {
@@ -47,4 +54,3 @@ export async function updateUserProfile(
 
   return await res.json();
 }
-

@@ -1,3 +1,5 @@
+import { authHeaders } from "../utils";
+
 export async function createBooking({
   listingId,
   startDate,
@@ -17,6 +19,7 @@ export async function createBooking({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...authHeaders(),
       },
       body: JSON.stringify({
         listingId,
@@ -40,6 +43,9 @@ export async function acceptBooking(bookingId: string) {
     `${process.env.NEXT_PUBLIC_BACKEND_API}/api/bookings/${bookingId}/accept`,
     {
       method: "PATCH",
+      headers: {
+        ...authHeaders(),
+      }
     },
   );
 
@@ -63,6 +69,7 @@ export async function updateBooking(data: {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          ...authHeaders(),
         },
         body: JSON.stringify({
           startDate: data.startDate,
@@ -79,6 +86,7 @@ export async function updateBooking(data: {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          ...authHeaders(),
         },
         body: JSON.stringify({
           status: data.status,
@@ -99,6 +107,11 @@ export async function getLatestBooking(listingId: string, renteeEmail: string) {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_API}/api/bookings/latest?listingId=${listingId}&renteeEmail=${renteeEmail}`,
+      {
+        headers: {
+          ...authHeaders(),
+        }
+      }
     );
 
     if (!res.ok) {
@@ -115,6 +128,11 @@ export async function getBookingById(bookingId: string) {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_API}/api/bookings/getBooking/${bookingId}`,
+      {
+        headers: {
+          ...authHeaders(),
+        }
+      }
     );
 
     if (!res.ok) {
@@ -137,6 +155,7 @@ export async function createPayment(paymentDetails: {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...authHeaders(),
     },
     body: JSON.stringify(paymentDetails),
   });
@@ -160,6 +179,7 @@ export async function createReview(payload: {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...authHeaders(),
     },
     body: JSON.stringify(payload),
   });

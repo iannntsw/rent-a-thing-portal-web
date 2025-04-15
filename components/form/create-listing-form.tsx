@@ -204,7 +204,6 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
         </div>
       </div>
 
-      {/* Image Upload */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
           Upload Images (Max 5)
@@ -220,13 +219,14 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
           {imageFiles.length} file{imageFiles.length !== 1 && "s"} selected
         </p>
 
-        {/* Preview thumbnails */}
         <div className="flex flex-wrap gap-2 pt-2">
           {imagePreviews.map((src, idx) => (
             <div key={idx} className="relative h-20 w-20">
               <Image
                 src={src}
                 alt={`Preview ${idx + 1}`}
+                width={80}
+                height={80}
                 className="h-full w-full rounded border border-gray-300 object-cover"
               />
               <button

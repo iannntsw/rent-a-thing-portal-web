@@ -1,5 +1,5 @@
 export async function signUp(data: any) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/createUser`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/auth/createUser`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export async function signUp(data: any) {
 }
 
 export async function signInUser(data: { email: string; password: string }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/login`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),

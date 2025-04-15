@@ -97,6 +97,8 @@ export default function ViewProfilePage({
           src={user.profilePicture || "/default-avatar.png"}
           alt="Profile"
           className="h-24 w-24 rounded-full border object-cover"
+          width={80}
+          height={80}
         />
         <div>
           <h2 className="text-xl font-semibold">
@@ -143,6 +145,8 @@ export default function ViewProfilePage({
                     })()}
                     alt={listing.title}
                     className="mb-2 h-32 w-32 rounded object-cover"
+                    width={80}
+                    height={80}
                   />
                 </Link>
                 <h3 className="text-lg font-medium">{listing.title}</h3>
@@ -190,6 +194,8 @@ export default function ViewProfilePage({
                 src={previewImage}
                 alt="Profile Preview"
                 className="mx-auto mb-2 h-24 w-24 rounded-full border object-cover"
+                width={80}
+                height={80}
               />
             )}
 

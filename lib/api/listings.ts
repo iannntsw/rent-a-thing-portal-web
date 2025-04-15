@@ -1,3 +1,5 @@
+import { authHeaders } from "../utils";
+
 export async function createListing(userEmail: string, payload: any) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_API}/api/listings/createListing/${userEmail}`,
@@ -5,6 +7,7 @@ export async function createListing(userEmail: string, payload: any) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...authHeaders(),
       },
       body: JSON.stringify(payload),
     },
@@ -21,6 +24,11 @@ export async function createListing(userEmail: string, payload: any) {
 export const fetchAllListings = async () => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_API}/api/listings/getAllListing`,
+    {
+      headers: {
+        ...authHeaders(),
+      }
+    }
   );
   if (!res.ok) throw new Error("Failed to fetch products");
   return res.json();
@@ -32,6 +40,9 @@ export const getListingById = async (id: string) => {
       `${process.env.NEXT_PUBLIC_BACKEND_API}/api/listings/getListing/${id}`,
       {
         cache: "no-store",
+        headers: {
+          ...authHeaders(),
+        }
       },
     );
     if (!res.ok) throw new Error("Failed to fetch listing");
@@ -49,6 +60,7 @@ export async function updateListing(listingId: string, updatedData: any) {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          ...authHeaders(),
         },
         body: JSON.stringify(updatedData),
       },
@@ -70,6 +82,9 @@ export async function deleteListing(listingId: string) {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/listings/deleteListing/${listingId}`, {
       method: "DELETE",
+      headers: {
+        ...authHeaders(),
+      }
     });
 
     if (!res.ok) {
