@@ -1,3 +1,5 @@
+// THIS PAGE IS USELESS
+
 // package
 import { useState } from "react";
 import Link from "next/link";

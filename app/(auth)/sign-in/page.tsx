@@ -119,19 +119,14 @@ export default function Page() {
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <input
                     type="checkbox"
                     id="remember-me"
                     className="h-6 w-6 cursor-pointer rounded-md border border-[#6C7275] accent-black"
                   />
-                  <label
-                    htmlFor="remember-me"
-                    className="text-sm text-gray-700"
-                  >
-                    Remember me
-                  </label>
+
                 </div>
 
                 <Text
@@ -142,7 +137,7 @@ export default function Page() {
                 >
                   <Link href="/forgot-password">Forgot password?</Link>
                 </Text>
-              </div>
+              </div> */}
 
               <Button width="full" className="py-2.5" type="submit">
                 Sign In
@@ -153,7 +148,7 @@ export default function Page() {
               <div className="h-[1px] w-full bg-gray-300"></div>
               <span className="absolute bg-white px-4 text-gray-500">OR</span>
             </div>
-
+            {/* 
             <button
               onClick={() => signIn("google")}
               className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-100"
@@ -167,7 +162,7 @@ export default function Page() {
               <span className="font-medium text-gray-700">
                 Sign in with Google
               </span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

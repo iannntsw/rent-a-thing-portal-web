@@ -86,7 +86,7 @@ export default function ViewProfilePage({
         {userId === loggedInUserId && (
           <button
             onClick={() => setShowEditDialog(true)}
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            className="rounded bg-[#2C3725] px-4 py-2 text-white hover:bg-[#1f251a]"
           >
             Edit Profile
           </button>
@@ -295,7 +295,7 @@ export default function ViewProfilePage({
                 Cancel
               </button>
               <button
-                className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                className="rounded bg-[#2C3725] px-4 py-2 text-white hover:bg-[#1f251a]"
                 onClick={handleSave}
               >
                 Save Changes

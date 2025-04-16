@@ -21,6 +21,23 @@ import { fetchAllListings } from "@/lib/api/listings";
 export default function Home() {
   const router = useRouter();
   const [newArrivals, setNewArrivals] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchInput.trim()) {
+      router.push(`/products?query=${encodeURIComponent(searchInput.trim())}`);
+
+      setSearchInput("");
+    }
+  };
+
+  const HOMEPAGE_CATEGORIES = [
+    { label: "Home & Living", image: "home-living.png" },
+    { label: "Electronics & Gadgets", image: "electronics-gadgets.png" },
+    { label: "Clothing & Accessories", image: "clothing-accessories.png" },
+    { label: "Vehicles", image: "vehicles.png" },
+    { label: "Others", image: "others.png" },
+  ];
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,11 +47,13 @@ export default function Home() {
 
     fetchAllListings()
       .then((data) => {
-        const arrivals = data
-          .sort(
-            (a: { createdAt: string | number | Date; }, b: { createdAt: string | number | Date; }) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-          );
+        const arrivals = data.sort(
+          (
+            a: { createdAt: string | number | Date },
+            b: { createdAt: string | number | Date },
+          ) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
         setNewArrivals(arrivals);
       })
       .catch((err) => {
@@ -45,19 +64,18 @@ export default function Home() {
     <>
       {/* Hero section */}
       <SectionLayout
-        bg="bg-[#ffc95c]"
-        className="flex flex-col items-center justify-between lg:grid lg:grid-cols-2 lg:pt-8"
+        bg="bg-[#809671]"
+        className="flex flex-col items-center justify-center py-20"
       >
-        {/* Text content */}
-        <div className="flex flex-col items-center gap-6 p-10 sm:max-w-[600px] md:max-w-[600px] md:py-20 lg:order-2 lg:max-w-none lg:items-start lg:p-0">
-          <div className="space-y-4 text-center lg:text-left">
+        <div className="flex max-w-xl flex-col items-center gap-6 px-6 text-center">
+          <div className="lg:text-middle space-y-4 text-center">
             <Heading
               as="h1"
               intent="hero-section"
-              className="text-4xl font-bold leading-tight"
+              className="text-4xl font-bold leading-snug tracking-tight md:text-5xl"
             >
               Why buy when you can
-              <span className="bg-gradient-to-r from-[#377DFF] to-[#00C2FF] bg-clip-text text-transparent">
+              <span className=" bg-gradient-to-r from-[#FEFCFF] to-[#FEFCFF] bg-clip-text  text-transparent ">
                 {" "}
                 rent?
               </span>
@@ -71,23 +89,43 @@ export default function Home() {
           <Link href="/sign-up">
             <Button
               fontSize="sm"
-              className="rounded-lg bg-[#377DFF] px-14 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-[#0057D9] md:text-lg"
+              className="rounded-lg bg-[#2c3725] px-14 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-[#576b4a] md:text-lg"
             >
               Get Started
             </Button>
           </Link>
         </div>
 
-        {/* Image content */}
+        {/* Search button*/}
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex w-full max-w-md gap-2 pt-4"
+        >
+          <input
+            type="text"
+            placeholder="Search for items..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="flex-grow rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-[#2c3725] focus:ring-[#2c3725]"
+          />
+          <button
+            type="submit"
+            className="rounded-lg bg-[#2c3725] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#576b4a]"
+          >
+            Search
+          </button>
+        </form>
+
+        {/* Image content
         <div className="flex h-auto w-full items-end justify-center overflow-hidden lg:order-1">
           <Image
             src="/images/main.png"
             width={600}
             height={761}
-            alt="nigga-listening-music"
+            alt="family"
             className="w-full max-w-[360px] object-cover object-top lg:max-w-[420px] xl:max-w-[460px]"
           />
-        </div>
+        </div> */}
       </SectionLayout>
 
       {/* Product section */}
@@ -102,102 +140,58 @@ export default function Home() {
           </Heading>
 
           {/* catalog product slider */}
-          <CatalogSlider products={newArrivals}/>
+          <CatalogSlider products={newArrivals} />
         </div>
       </SectionLayout>
 
-      {/* Shop collection section */}
+      {/* Explore Categories section */}
       <SectionLayout>
-        <div className="space-y-4 px-8 py-10 sm:space-y-8 md:space-y-12">
+        <div className="space-y-3 px-8 py-8 sm:space-y-4 md:space-y-6">
           <Heading
             as="h2"
             intent="base-section"
             className="text-center md:text-left"
           >
-            Shop Collection
+            Explore Categories
           </Heading>
 
-          <div className="grid grid-cols-1 place-items-center gap-4 sm:grid-cols-2 lg:h-[560px]">
-            {/* Main collection */}
-            <div className="relative aspect-[0.8/1] min-h-[377px] w-full min-w-[311px] bg-[#F3F5F7] p-8 sm:row-span-2 sm:aspect-auto sm:h-full sm:min-w-0">
-              <div className="absolute inset-0 flex h-full w-full items-center justify-center overflow-hidden">
-                <Image
-                  src="/images/sumplekuping-2.png"
-                  width={262}
-                  height={349}
-                  alt="background collection"
-                  className="aspect-[0.75/1] w-[80%] -translate-y-[10%] object-center md:w-[60%]"
-                />
-              </div>
+          {/* View All Categories Link */}
+          <div className="flex justify-start">
+            <Link
+              href="/categories"
+              className="text-sm font-semibold text-[#2c3725] underline hover:text-[#576b4a]"
+            >
+              View all categories
+            </Link>
+          </div>
 
-              <div className="relative flex h-full flex-col justify-end gap-2">
-                <Heading as="h3" intent="collection-card">
-                  Headband
-                </Heading>
-                <Link href="/shop" className="w-fit">
-                  <span className="flex w-fit items-center gap-1 border-b border-[#121212]">
-                    Collection{" "}
-                    <ArrowRightIcon stroke="#121212" className="h-4 w-4" />
-                  </span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Another collection */}
-            <div className="relative aspect-[1/0.5] min-h-[180px] w-full min-w-[311px] bg-[#F3F5F7] p-8 sm:aspect-auto sm:h-full sm:min-w-0">
-              <div className="absolute inset-0 flex h-full w-full items-center justify-center overflow-hidden">
-                <Image
-                  src="/images/sumplekuping-4.png"
-                  width={262}
-                  height={349}
-                  alt="background collection"
-                  className="aspect-[0.75/1] w-[50%] translate-x-1/2 md:w-[40%]"
-                />
-              </div>
-
-              <div className="relative flex h-full flex-col justify-end gap-2">
-                <Heading as="h3" intent="collection-card">
-                  Earbuds
-                </Heading>
-                <Link href="/shop" className="w-fit">
-                  <span className="flex w-fit items-center gap-1 border-b border-[#121212]">
-                    Collection{" "}
-                    <ArrowRightIcon stroke="#121212" className="h-4 w-4" />
-                  </span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Another collection */}
-            <div className="relative aspect-[1/0.5] min-h-[180px] w-full min-w-[311px] bg-[#F3F5F7] p-8 sm:aspect-auto sm:h-full sm:min-w-0">
-              <div className="absolute inset-0 flex h-full w-full items-center justify-center overflow-hidden">
-                <Image
-                  src="/images/sumplekuping-5.png"
-                  width={262}
-                  height={349}
-                  alt="background collection"
-                  className="aspect-[0.75/1] w-[50%] translate-x-1/2 md:w-[40%]"
-                />
-              </div>
-
-              <div className="relative flex h-full flex-col justify-end gap-2">
-                <Heading as="h3" intent="collection-card">
-                  Accessories
-                </Heading>
-                <Link href="/shop" className="w-fit">
-                  <span className="flex w-fit items-center gap-1 border-b border-[#121212]">
-                    Collection{" "}
-                    <ArrowRightIcon stroke="#121212" className="h-4 w-4" />
-                  </span>
-                </Link>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {HOMEPAGE_CATEGORIES.map((cat) => (
+              <Link
+                key={cat.label}
+                href={`/products?category=${encodeURIComponent(cat.label)}`}
+                className="group rounded-lg transition hover:shadow-md"
+              >
+                <div className="relative h-40 w-full overflow-hidden ">
+                  <Image
+                    src={`/images/${cat.image}`}
+                    alt={cat.label}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="mt-3 text-center">
+                  <p className="text-sm font-semibold text-black group-hover:text-[#809671]">
+                    {cat.label}
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </SectionLayout>
 
-
-      {/* Features section */}
+      {/* Features section
       <SectionLayout>
         <div className="grid grid-cols-2 gap-x-2 gap-y-6 p-8 md:grid-cols-4 lg:gap-6 lg:py-10">
           <div className="space-y-4 bg-[#F3F5F7] px-4 py-8 lg:px-8 lg:py-12">
@@ -269,9 +263,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </SectionLayout>
+      </SectionLayout> */}
 
-      <SectionLayout>
+      {/* <SectionLayout>
         <div className="space-y-10 px-8 py-10">
           <div className="space-y-4 text-center">
             <Text weight={700} transform="uppercase" color="gray">
@@ -285,7 +279,7 @@ export default function Home() {
             </Text>
           </div>
         </div>
-      </SectionLayout>
+      </SectionLayout> */}
     </>
   );
 }
