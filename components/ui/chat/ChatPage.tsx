@@ -12,14 +12,6 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   acceptBooking,
   createBooking,
   getConfirmedBookings,
@@ -27,12 +19,12 @@ import {
   updateBooking,
 } from "@/lib/api/bookings";
 import { getListingById } from "@/lib/api/listings";
-import ReviewDialog from "../review-dialog";
-import DatePicker from "react-datepicker";
-import { format } from "date-fns";
+import ReviewDialog from "../dialog/review-dialog";
 import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
 import Swal from "sweetalert2";
+import BookingDialog from "../dialog/booking-dialog";
+import { getUserByEmail } from "@/lib/api/user";
 
 export default function ChatPage({
   listingId,
@@ -54,9 +46,6 @@ export default function ChatPage({
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
   const [latestBooking, setLatestBooking] = useState<any>(null);
   const [showCompleteDialog, setShowCompleteDialog] = useState(false);
-  const [showReviewDialog, setShowReviewDialog] = useState(false);
-  const [reviewText, setReviewText] = useState("");
-  const [rating, setRating] = useState("");
   const [disabledDates, setDisabledDates] = useState<string[]>([]);
   const [availableRange, setAvailableRange] = useState<{
     from: string;
@@ -67,26 +56,7 @@ export default function ChatPage({
     title: string;
     image: string;
   } | null>(null);
-
-  const handleSubmitReview = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      setShowReviewDialog(false);
-      await Swal.fire({
-        icon: "success",
-        title: "Review Submitted",
-        text: "Thank you for your feedback!",
-      });
-    } catch (err: any) {
-      console.error("Failed to submit review:", err);
-      await Swal.fire({
-        icon: "error",
-        title: "Submission Failed",
-        text: err.message || "Error submitting review.",
-      });
-    }
-  };
+  const [chatPartner, setChatPartner] = useState<any>(null);
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -122,10 +92,27 @@ export default function ChatPage({
           setIsRenter(true);
         }
       }
+
+      let chatWithEmail: string | null = null;
+
+      if (listing.user?.email === userEmail) {
+        const latestOffer = messages
+          .slice()
+          .reverse()
+          .find((msg) => msg.type === "offer" && msg.sender !== userEmail);
+        chatWithEmail = latestOffer?.sender || null;
+      } else {
+        chatWithEmail = listing.user?.email;
+      }
+
+      if (chatWithEmail) {
+        const partner = await getUserByEmail(chatWithEmail);
+        if (partner) setChatPartner(partner);
+      }
     };
 
     checkOwnership();
-  }, [listingId]);
+  }, [listingId, messages, userEmail]);
 
   useEffect(() => {
     const fetchLatestBooking = async () => {
@@ -409,166 +396,168 @@ export default function ChatPage({
   };
 
   return (
-    <div className="mx-auto max-w-xl space-y-4 p-4">
-      <div className="flex items-center justify-between border-b pb-4">
-        <h2 className="text-lg font-semibold">Chat</h2>
-        {showCompleteDialog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
-              <h2 className="mb-2 text-lg font-semibold">Complete Booking</h2>
-              <p className="mb-4 text-gray-700">
-                Before completing the booking, please ensure the item has been
-                returned in good condition and both parties are satisfied.
-              </p>
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={() => setShowCompleteDialog(false)}
-                  className="rounded border px-4 py-2 text-gray-700 hover:bg-gray-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCompleteBooking}
-                  className="rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
-                >
-                  Complete Booking
-                </button>
-              </div>
-            </div>
+    <div className="mx-auto flex max-w-5xl gap-6 p-4">
+      {chatPartner && (
+        <div className="w-1/4 min-w-[240px] rounded-2xl border border-gray-200 bg-white p-5 shadow-md">
+          <div className="flex flex-col items-center text-center">
+            <Image
+              src={chatPartner.profilePicture || "/default-avatar.png"}
+              alt="User Profile"
+              width={96}
+              height={96}
+              className="mb-3 rounded-full object-cover shadow"
+            />
+            <span className="text-sm text-yellow-600">
+              ⭐ {chatPartner.averageRating?.toFixed(1)}
+            </span>
+            <h3 className="text-lg font-semibold text-gray-800">
+              {chatPartner.username}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {chatPartner.firstName} {chatPartner.lastName}
+            </p>
+            <a
+              href={`/profile/${chatPartner.userId}`}
+              className="mt-1 text-sm text-blue-600 hover:underline"
+            >
+              View Profile
+            </a>
           </div>
-        )}
 
-        {showReviewDialog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
-              <h2 className="mb-2 text-center text-lg font-semibold">
-                Leave a Review
-              </h2>
-              <p className="mb-4 text-center text-sm text-gray-600">
-                Let the community know how your experience went!
-              </p>
-              <form
-                onSubmit={handleSubmitReview}
-                className="flex flex-col gap-3"
-              >
-                <textarea
-                  required
-                  value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
-                  placeholder="Write your review..."
-                  className="w-full rounded border p-2"
-                />
-                <select
-                  required
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                  className="w-full rounded border p-2"
-                >
-                  <option value="">Rating</option>
-                  <option value="5">🌟🌟🌟🌟🌟 (5)</option>
-                  <option value="4">🌟🌟🌟🌟 (4)</option>
-                  <option value="3">🌟🌟🌟 (3)</option>
-                  <option value="2">🌟🌟 (2)</option>
-                  <option value="1">🌟 (1)</option>
-                </select>
-
+          <div className="mt-5 border-t pt-4 text-sm text-gray-700">
+            {chatPartner.email && (
+              <div className="mb-2 flex items-center gap-2">
+                <span className="material-icons text-gray-400">Email: </span>
+                <span className="truncate">{chatPartner.email}</span>
+              </div>
+            )}
+            {chatPartner.phoneNumber && (
+              <div className="mb-2 flex items-center gap-2">
+                <span className="material-icons text-gray-400">Phone: </span>
+                <span>{chatPartner.phoneNumber}</span>
+              </div>
+            )}
+            {chatPartner.createdAt && (
+              <div className="mb-2 flex items-center gap-2">
+                <span className="material-icons text-gray-400">Joined:</span>
+                <span>
+                  {new Date(chatPartner.createdAt).toLocaleDateString(
+                    undefined,
+                    {
+                      year: "numeric",
+                      month: "short",
+                    },
+                  )}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      <div className="flex-1 space-y-4">
+        <div className="flex items-center justify-between border-b pb-4">
+          <h2 className="text-lg font-semibold">Chat</h2>
+          {showCompleteDialog && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+              <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg">
+                <h2 className="mb-2 text-lg font-semibold">Complete Booking</h2>
+                <p className="mb-4 text-gray-700">
+                  Before completing the booking, please ensure the item has been
+                  returned in good condition and both parties are satisfied.
+                </p>
                 <div className="flex justify-end gap-2">
                   <button
-                    type="button"
+                    onClick={() => setShowCompleteDialog(false)}
                     className="rounded border px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    onClick={() => setShowReviewDialog(false)}
                   >
                     Cancel
                   </button>
                   <button
-                    type="submit"
-                    className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                    onClick={handleCompleteBooking}
+                    className="rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
                   >
-                    Submit Review
+                    Complete Booking
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {isRenter && messages.find((m) => m.type === "offer" && m.bookingId) ? (
-          (() => {
-            const offerMsg = [...messages]
-              .reverse()
-              .find((m) => m.type === "offer" && m.bookingId);
-            if (!offerMsg) return null;
+          {isRenter &&
+          messages.find((m) => m.type === "offer" && m.bookingId) ? (
+            (() => {
+              const offerMsg = [...messages]
+                .reverse()
+                .find((m) => m.type === "offer" && m.bookingId);
+              if (!offerMsg) return null;
 
-            const isPending =
-              latestBooking?.bookingId === offerMsg.bookingId &&
-              latestBooking?.status === "Pending";
+              const isPending =
+                latestBooking?.bookingId === offerMsg.bookingId &&
+                latestBooking?.status === "Pending";
 
-            if (latestBooking?.status === "Confirmed") {
-              return (
-                <button
-                  className="mb-4 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
-                  onClick={() => setShowCompleteDialog(true)}
-                >
-                  Complete Booking
-                </button>
-              );
-            }
+              if (latestBooking?.status === "Confirmed") {
+                return (
+                  <button
+                    className="mb-4 rounded bg-purple-600 px-4 py-2 text-white hover:bg-purple-700"
+                    onClick={() => setShowCompleteDialog(true)}
+                  >
+                    Complete Booking
+                  </button>
+                );
+              }
 
-            if (isPending) {
-              return (
-                <button
-                  onClick={() =>
-                    handleAcceptOffer(
-                      offerMsg.bookingId,
-                      offerMsg.text,
-                      offerMsg.sender,
-                    )
-                  }
-                  className="mb-4 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-                >
-                  Accept Booking
-                </button>
-              );
-            }
+              if (isPending) {
+                return (
+                  <button
+                    onClick={() =>
+                      handleAcceptOffer(
+                        offerMsg.bookingId,
+                        offerMsg.text,
+                        offerMsg.sender,
+                      )
+                    }
+                    className="mb-4 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                  >
+                    Accept Booking
+                  </button>
+                );
+              }
 
-            if (latestBooking?.status === "Completed") {
-              return (
-                <ReviewDialog
-                  listingId={listingId}
-                  reviewerId={currentUserId!}
-                  recipientId={
-                    isRenter ? latestBooking.rentee.userId : listingOwnerId!
-                  }
-                  bookingId={latestBooking.bookingId}
-                />
-              );
-            }
-          })()
-        ) : !isRenter ? (
-          <Dialog
-            open={isDialogOpen}
-            onOpenChange={(open) => {
-              setIsDialogOpen(open);
-              if (!open) setEditingBookingId(null);
-            }}
-          >
+              if (latestBooking?.status === "Completed") {
+                return (
+                  <ReviewDialog
+                    listingId={listingId}
+                    reviewerId={currentUserId!}
+                    recipientId={
+                      isRenter ? latestBooking.rentee.userId : listingOwnerId!
+                    }
+                    bookingId={latestBooking.bookingId}
+                  />
+                );
+              }
+            })()
+          ) : !isRenter ? (
             <div className="flex gap-2">
-              <DialogTrigger asChild>
-                <button
-                  className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={
-                    hasActiveBooking && latestBooking?.status !== "Completed"
-                  }
-                  onClick={() => {
-                    setStartDate("");
-                    setEndDate("");
-                    setPricePerDay("");
-                    setEditingBookingId(null);
-                  }}
-                >
-                  Make Booking
-                </button>
-              </DialogTrigger>
+              <BookingDialog
+                open={isDialogOpen}
+                onOpenChange={(open) => {
+                  setIsDialogOpen(open);
+                  if (!open) setEditingBookingId(null);
+                }}
+                disabledDates={disabledDates}
+                availableRange={availableRange}
+                startDate={startDate}
+                endDate={endDate}
+                pricePerDay={pricePerDay}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
+                setPricePerDay={setPricePerDay}
+                editingBookingId={editingBookingId}
+                handleBookingAction={handleBookingAction}
+                triggerDisabled={
+                  hasActiveBooking && latestBooking?.status !== "Completed"
+                }
+              />
 
               {latestBooking?.status === "Accepted" && (
                 <button
@@ -585,167 +574,88 @@ export default function ChatPage({
                 <ReviewDialog
                   listingId={listingId}
                   reviewerId={currentUserId!}
-                  recipientId={
-                    isRenter ? latestBooking.rentee.userId : listingOwnerId!
-                  }
+                  recipientId={listingOwnerId!}
                   bookingId={latestBooking.bookingId}
                 />
               )}
             </div>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {editingBookingId ? "Edit Booking" : "Book This Item"}
-                </DialogTitle>
-                <DialogDescription>
-                  Select your preferred dates and price per day.
-                </DialogDescription>
-              </DialogHeader>
-              <DatePicker
-                selected={startDate ? new Date(startDate) : null}
-                onChange={(date: Date | null) =>
-                  setStartDate(date ? format(date, "yyyy-MM-dd") : "")
-                }
-                excludeDates={disabledDates.map((d) => new Date(d))}
-                minDate={
-                  availableRange ? new Date(availableRange.from) : undefined
-                }
-                maxDate={
-                  availableRange ? new Date(availableRange.until) : undefined
-                }
-                dateFormat="yyyy-MM-dd"
-                placeholderText="Select start date"
-                className="w-full rounded border px-3 py-2"
-              />
-              <DatePicker
-                selected={endDate ? new Date(endDate) : null}
-                onChange={(date: Date | null) => {
-                  if (!startDate || !date) return setEndDate("");
+          ) : null}
+        </div>
+        {listingInfo && availableRange && (
+          <a
+            href={`/products/${listingId}`}
+            className="mb-3 flex items-center gap-2 rounded border p-2 hover:bg-gray-100"
+          >
+            <Image
+              src={listingInfo.image}
+              alt="Listing Thumbnail"
+              className="h-12 w-12 flex-shrink-0 rounded object-cover"
+              width={48}
+              height={48}
+            />
+            <div className="flex flex-col overflow-hidden">
+              <h3 className="truncate text-xs font-medium text-gray-800">
+                {listingInfo.title}
+              </h3>
+              <span className="text-[12px] text-gray-500">
+                Availability: {formatDateString(availableRange.from)} –{" "}
+                {formatDateString(availableRange.until)}
+              </span>
+            </div>
+          </a>
+        )}
+        <div className="h-[300px] overflow-y-auto rounded border p-2">
+          {messages.map((msg) => (
+            <div key={msg.id} className="mb-2">
+              <span className="font-semibold">{msg.sender}:</span>{" "}
+              {msg.type === "offer" ? (
+                <div className="flex flex-col">
+                  <span className="font-bold text-green-700">{msg.text}</span>
+                  {msg.sender === userEmail && (
+                    <div className="mt-1 flex gap-2">
+                      <button
+                        onClick={() => openEditDialog(msg.bookingId)}
+                        className="w-fit rounded bg-yellow-600 px-2 py-1 text-xs text-white hover:bg-yellow-700"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleCancelBooking(msg.bookingId)}
+                        className="w-fit rounded bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : msg.type === "info" &&
+                msg.bookingId &&
+                msg === latestRequest &&
+                currentUserId !== listingOwnerId ? (
+                <div className="flex flex-col">
+                  <span>{msg.text}</span>
+                </div>
+              ) : (
+                msg.text
+              )}
+            </div>
+          ))}
+        </div>
 
-                  const selectedStart = new Date(startDate);
-                  const selectedEnd = new Date(date);
-
-                  const hasOverlap = disabledDates.some((disabledDate) => {
-                    const d = new Date(disabledDate);
-                    return d >= selectedStart && d <= selectedEnd;
-                  });
-
-                  if (hasOverlap) {
-                    alert(
-                      "Your selected booking range overlaps with an existing booking. Please choose a different range.",
-                    );
-                    setEndDate("");
-                    return;
-                  }
-
-                  setEndDate(format(date, "yyyy-MM-dd"));
-                }}
-                excludeDates={disabledDates.map((d) => new Date(d))}
-                minDate={
-                  startDate
-                    ? new Date(startDate)
-                    : availableRange
-                      ? new Date(availableRange.from)
-                      : undefined
-                }
-                maxDate={
-                  availableRange ? new Date(availableRange.until) : undefined
-                }
-                dateFormat="yyyy-MM-dd"
-                placeholderText="Select end date"
-                className="w-full rounded border px-3 py-2"
-              />
-              <input
-                type="number"
-                value={pricePerDay}
-                onChange={(e) => setPricePerDay(e.target.value)}
-                className="w-full rounded border px-3 py-2"
-                placeholder="Your offer (price per day)"
-              />
-              <button
-                className="w-full rounded bg-blue-600 py-2 text-white hover:bg-blue-700"
-                onClick={handleBookingAction}
-              >
-                {editingBookingId ? "Update Booking" : "Confirm Booking"}
-              </button>
-            </DialogContent>
-          </Dialog>
-        ) : null}
-      </div>
-      {listingInfo && availableRange && (
-        <a
-          href={`/products/${listingId}`}
-          className="mb-3 flex items-center gap-2 rounded border p-2 hover:bg-gray-100"
-        >
-          <Image
-            src={listingInfo.image}
-            alt="Listing Thumbnail"
-            className="h-12 w-12 flex-shrink-0 rounded object-cover"
-            width={48}
-            height={48}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            className="flex-1 rounded border px-4 py-2"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
           />
-          <div className="flex flex-col overflow-hidden">
-            <h3 className="truncate text-xs font-medium text-gray-800">
-              {listingInfo.title}
-            </h3>
-            <span className="text-[12px] text-gray-500">
-              Availability: {formatDateString(availableRange.from)} –{" "}
-              {formatDateString(availableRange.until)}
-            </span>
-          </div>
-        </a>
-      )}
-      <div className="h-[300px] overflow-y-auto rounded border p-2">
-        {messages.map((msg) => (
-          <div key={msg.id} className="mb-2">
-            <span className="font-semibold">{msg.sender}:</span>{" "}
-            {msg.type === "offer" ? (
-              <div className="flex flex-col">
-                <span className="font-bold text-green-700">{msg.text}</span>
-                {msg.sender === userEmail && (
-                  <div className="mt-1 flex gap-2">
-                    <button
-                      onClick={() => openEditDialog(msg.bookingId)}
-                      className="w-fit rounded bg-yellow-600 px-2 py-1 text-xs text-white hover:bg-yellow-700"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleCancelBooking(msg.bookingId)}
-                      className="w-fit rounded bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : msg.type === "info" &&
-              msg.bookingId &&
-              msg === latestRequest &&
-              currentUserId !== listingOwnerId ? (
-              <div className="flex flex-col">
-                <span>{msg.text}</span>
-              </div>
-            ) : (
-              msg.text
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="flex gap-2">
-        <input
-          type="text"
-          className="flex-1 rounded border px-4 py-2"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button
-          className="rounded bg-blue-500 px-4 py-2 text-white"
-          onClick={handleSend}
-        >
-          Send
-        </button>
+          <button
+            className="rounded bg-blue-500 px-4 py-2 text-white"
+            onClick={handleSend}
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );

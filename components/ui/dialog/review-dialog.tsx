@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog/dialog";
 import { createReview } from "@/lib/api/bookings";
 import Swal from "sweetalert2";
 
