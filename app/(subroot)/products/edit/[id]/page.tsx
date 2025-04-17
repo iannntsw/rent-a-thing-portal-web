@@ -18,6 +18,7 @@ export default function EditListingPage({
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
   const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+  const today = new Date().toISOString().split("T")[0];
 
   const [form, setForm] = useState({
     title: "",
@@ -75,6 +76,16 @@ export default function EditListingPage({
   };
 
   const handleSubmit = async () => {
+    const fromDate = new Date(form.availableFrom);
+    const untilDate = new Date(form.availableUntil);
+    if (untilDate < fromDate) {
+      return Swal.fire({
+        icon: "error",
+        title: "Invalid Dates",
+        text: "'Available Until' cannot be before 'Available From'.",
+      });
+    }
+
     try {
       const base64NewImages = await Promise.all(
         newImageFiles.map((file) => {
@@ -103,13 +114,17 @@ export default function EditListingPage({
         icon: "success",
         title: "Success!",
         text: "Listing updated successfully.",
-      });      router.push(`/products/${id}`);
+      });
+      router.push(`/products/${id}`);
     } catch (err: any) {
       console.error("Update failed", err);
       Swal.fire({
         icon: "error",
         title: "Update Failed",
-        text: err?.response?.data?.message || err.message || "Something went wrong. Please try again.",
+        text:
+          err?.response?.data?.message ||
+          err.message ||
+          "Something went wrong. Please try again.",
       });
     }
   };
@@ -191,9 +206,7 @@ export default function EditListingPage({
           ))}
         </div>
 
-        <label className="block text-sm font-medium text-gray-700">
-          Title
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Title</label>
         <input
           name="title"
           placeholder="Title"
@@ -229,7 +242,7 @@ export default function EditListingPage({
           categories={CATEGORIES}
         />
 
-<label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700">
           Location
         </label>
         <input
@@ -245,6 +258,7 @@ export default function EditListingPage({
         <input
           name="availableFrom"
           type="date"
+          min={today}
           value={form.availableFrom}
           onChange={handleChange}
           className="w-full rounded border p-2"
@@ -255,6 +269,7 @@ export default function EditListingPage({
         <input
           name="availableUntil"
           type="date"
+          min={today}
           value={form.availableUntil}
           onChange={handleChange}
           className="w-full rounded border p-2"

@@ -209,6 +209,13 @@ export default function ChatPage({
       return alert("Please fill in all booking fields.");
     }
 
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (end < start) {
+      return alert("Requested End date cannot be before Requested start date");
+    }
+
     try {
       setIsDialogOpen(false);
       if (editingBookingId) {
@@ -260,7 +267,6 @@ export default function ChatPage({
           text: "Your booking has been submitted successfully!",
         });
       }
-
     } catch (err: any) {
       console.error(err);
       await Swal.fire({
