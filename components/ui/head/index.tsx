@@ -12,6 +12,7 @@ const headingVariants = cva("font-poppins font-medium text-[#121212]", {
     intent: {
       "hero-section": "text-[40px] md:text-6xl xl:text-7xl",
       "base-section": "text-[34px] md:text-[40px]",
+      "base-subsection": "text-[28px] md:text-[30px]",
       "collection-card": "text-[28px] md:text-[34px]",
       "shop-page": "text-[40px] lg:text-[54px]",
     },
