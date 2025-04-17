@@ -30,6 +30,8 @@ import { getListingById } from "@/lib/api/listings";
 import ReviewDialog from "../review-dialog";
 import DatePicker from "react-datepicker";
 import { format } from "date-fns";
+import { formatDateString } from "@/lib/utils";
+import Image from "next/image";
 
 export default function ChatPage({
   listingId,
@@ -60,6 +62,10 @@ export default function ChatPage({
     until: string;
   } | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [listingInfo, setListingInfo] = useState<{
+    title: string;
+    image: string;
+  } | null>(null);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +93,17 @@ export default function ChatPage({
           until: new Date(listing.availableUntil * 1000)
             .toISOString()
             .slice(0, 10),
+        });
+
+        let imageUrl = "/default-product.png";
+        try {
+          const parsed = JSON.parse(listing.images || "[]");
+          if (parsed?.[0]) imageUrl = parsed[0];
+        } catch {}
+
+        setListingInfo({
+          title: listing.title,
+          image: imageUrl,
         });
       }
 
@@ -195,7 +212,7 @@ export default function ChatPage({
 
         await addDoc(collection(db, "conversations", convoId, "messages"), {
           sender: userEmail,
-          text: `✏️ Booking request updated to ${startDate} → ${endDate} at $${pricePerDay}/day.`,
+          text: `✏️ Booking request updated to ${formatDateString(startDate)} → ${formatDateString(endDate)} at $${pricePerDay}/day.`,
           type: "info",
           bookingId: editingBookingId,
           createdAt: serverTimestamp(),
@@ -214,7 +231,7 @@ export default function ChatPage({
 
         await addDoc(collection(db, "conversations", convoId, "messages"), {
           sender: userEmail,
-          text: `📝 Booking offer sent from ${startDate} to ${endDate} at $${pricePerDay}/day`,
+          text: `📝 Booking offer sent from ${formatDateString(startDate)} to ${formatDateString(endDate)} at $${pricePerDay}/day`,
           type: "offer",
           bookingId: booking.bookingId,
           startDate,
@@ -264,6 +281,7 @@ export default function ChatPage({
     setEndDate(offer.endDate?.slice(0, 10));
     setPricePerDay(offer.pricePerDay?.toString());
     setEditingBookingId(bookingId);
+    setIsDialogOpen(true);
   };
 
   const handleCancelBooking = async (bookingId: string) => {
@@ -600,7 +618,29 @@ export default function ChatPage({
           </Dialog>
         ) : null}
       </div>
-
+      {listingInfo && availableRange && (
+        <a
+          href={`/products/${listingId}`}
+          className="mb-3 flex items-center gap-2 rounded border p-2 hover:bg-gray-100"
+        >
+          <Image
+            src={listingInfo.image}
+            alt="Listing Thumbnail"
+            className="h-12 w-12 flex-shrink-0 rounded object-cover"
+            width={48}
+            height={48}
+          />
+          <div className="flex flex-col overflow-hidden">
+            <h3 className="truncate text-xs font-medium text-gray-800">
+              {listingInfo.title}
+            </h3>
+            <span className="text-[12px] text-gray-500">
+              Availability: {formatDateString(availableRange.from)} –{" "}
+              {formatDateString(availableRange.until)}
+            </span>
+          </div>
+        </a>
+      )}
       <div className="h-[300px] overflow-y-auto rounded border p-2">
         {messages.map((msg) => (
           <div key={msg.id} className="mb-2">

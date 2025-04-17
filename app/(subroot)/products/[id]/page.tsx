@@ -12,6 +12,7 @@ import { createOrGetChat } from "@/lib/api/messages";
 import Link from "next/link";
 import { DialogHeader } from "@/components/ui/dialog";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { formatDateString } from "@/lib/utils";
 
 interface ListingPageProps {
   params: {
@@ -150,8 +151,8 @@ export default function ListingPage({ params }: ListingPageProps) {
             <h3>Location: {listing.location}</h3>
             <h3>
               Available:{" "}
-              {new Date(listing.availableFrom * 1000).toLocaleDateString()} -{" "}
-              {new Date(listing.availableUntil * 1000).toLocaleDateString()}
+              {formatDateString(new Date(listing.availableFrom * 1000).toISOString())} -{" "}
+              {formatDateString(new Date(listing.availableUntil * 1000).toISOString())}
             </h3>
             <h3>Description: {listing.description}</h3>
           </div>
@@ -179,7 +180,7 @@ export default function ListingPage({ params }: ListingPageProps) {
               @{listing.user?.username}
             </Link>
             <p className="text-sm text-gray-600">
-              Joined: {new Date(listing.user?.createdAt).toLocaleDateString()}
+              Joined: {formatDateString(new Date(listing.user?.createdAt).toISOString())}
             </p>
           </div>
         </div>

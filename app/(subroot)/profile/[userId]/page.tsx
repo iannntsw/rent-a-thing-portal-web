@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { getUserById, updateUserProfile } from "@/lib/api/user";
 import Link from "next/link";
 import Image from "next/image";
+import { formatDateString } from "@/lib/utils";
 
 export default function ViewProfilePage({
   params,
@@ -118,11 +119,12 @@ export default function ViewProfilePage({
         </p>
         <p>
           <strong>Joined:</strong>{" "}
-          {new Date(user.createdAt).toLocaleDateString()}
+          {formatDateString(new Date(user.createdAt).toISOString())}
         </p>
       </div>
+      <hr className="my-8 border-t border-gray-300" />
 
-      {user.listings?.length > 0 && (
+      {user.listings?.length > 0 ? (
         <div className="mt-10">
           <h2 className="mb-4 text-xl font-semibold">Listings</h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -159,9 +161,14 @@ export default function ViewProfilePage({
             ))}
           </div>
         </div>
+      ) : (
+        <div className="mt-10 text-center italic text-gray-500">
+          No listings yet.
+        </div>
       )}
+      <hr className="my-8 border-t border-gray-300" />
 
-      {user.receivedReviews?.length > 0 && (
+      {user.receivedReviews?.length > 0 ? (
         <div className="mt-10">
           <h2 className="mb-4 text-xl font-semibold">Reviews</h2>
           <div className="space-y-4">
@@ -182,6 +189,10 @@ export default function ViewProfilePage({
               </div>
             ))}
           </div>
+        </div>
+      ) : (
+        <div className="mt-10 text-center italic text-gray-500">
+          No reviews yet.
         </div>
       )}
 

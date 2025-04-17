@@ -38,3 +38,15 @@ export function authHeaders() {
     Authorization: `Bearer ${token}`,
   };
 }
+
+export function formatDateString(dateStr: string, locale = "en-SG", options?: Intl.DateTimeFormatOptions) {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "Invalid Date";
+
+  return date.toLocaleDateString(locale, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    ...options,
+  });
+}
