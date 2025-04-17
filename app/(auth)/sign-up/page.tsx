@@ -29,6 +29,10 @@ export default function Page() {
     profilePicture: "",
   });
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState<
+    "Weak" | "Medium" | "Strong" | ""
+  >("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -40,7 +44,12 @@ export default function Page() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
+  
+    if (passwordStrength === "Weak") {
+      setError("Password is too weak. Please choose a stronger password.");
+      return;
+    }
+  
     try {
       const response = await signUp(formData);
       router.push("/sign-in");
@@ -48,6 +57,31 @@ export default function Page() {
       setError(err.message || "Something went wrong");
     }
   };
+
+  useEffect(() => {
+    const strength = (password: string): "Weak" | "Medium" | "Strong" | "" => {
+      if (!password) return "";
+      if (password.length < 6) return "Weak";
+      const hasUpper = /[A-Z]/.test(password);
+      const hasLower = /[a-z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      const hasSymbol = /[^A-Za-z0-9]/.test(password);
+
+      if (
+        password.length >= 8 &&
+        hasUpper &&
+        hasLower &&
+        hasNumber &&
+        hasSymbol
+      ) {
+        return "Strong";
+      }
+
+      return "Medium";
+    };
+
+    setPasswordStrength(strength(formData.password));
+  }, [formData.password]);
 
   return (
     <div className="relative bg-[#F3F5F7] lg:min-h-screen">
@@ -141,16 +175,54 @@ export default function Page() {
                   onChange={handleChange}
                 />
               </div>
-              <div className="border-b border-[#E8ECEF] pb-2">
+              <div className="relative border-b border-[#E8ECEF] pb-2">
                 <Input
                   intent="secondary"
                   name="password"
-                  type="text"
+                  type={showPassword ? "text" : "password"}
                   required={true}
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-3 text-sm text-gray-500 hover:text-gray-800"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+
+                {passwordStrength && (
+                  <div className="mt-2">
+                    <div className="h-2 w-full rounded bg-gray-200">
+                      <div
+                        className={cn("h-2 rounded", {
+                          "w-1/3 bg-red-500": passwordStrength === "Weak",
+                          "w-2/3 bg-yellow-500": passwordStrength === "Medium",
+                          "w-full bg-green-500": passwordStrength === "Strong",
+                        })}
+                      />
+                    </div>
+                    <p
+                      className={cn("mt-1 text-xs font-medium", {
+                        "text-red-600": passwordStrength === "Weak",
+                        "text-yellow-600": passwordStrength === "Medium",
+                        "text-green-600": passwordStrength === "Strong",
+                      })}
+                    >
+                      Password strength: {passwordStrength}
+                    </p>
+                  </div>
+                )}
+
+                <p className="mt-1 text-xs text-gray-500">
+                  <strong>Weak:</strong> Less than 6 characters <br />
+                  <strong>Medium:</strong> At least 6 characters with letters
+                  and numbers <br />
+                  <strong>Strong:</strong> 8+ characters with upper, lower,
+                  numbers, and symbols
+                </p>
               </div>
               <div className="border-b border-[#E8ECEF] pb-2">
                 <Input
