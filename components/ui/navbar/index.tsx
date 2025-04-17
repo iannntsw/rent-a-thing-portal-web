@@ -64,9 +64,9 @@ const Navbar: React.FC = () => {
           : "bg-white",
       )}
     >
-      <nav className="mx-auto flex max-w-[1440px] items-center justify-between px-8 py-4">
+      <nav className="mx-auto flex max-w-[1440px] items-center justify-start gap-x-8 px-8 py-4">
         {/* Left: Logo and mobile menu */}
-        <div className="flex items-center gap-1 lg:basis-1/4">
+        <div className="flex items-center gap-3">
           <button className="lg:hidden" onClick={() => setOpen(true)}>
             <HamburgerMenu className="w-6" />
           </button>
@@ -75,13 +75,13 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
 
-        {/* Center: Nav links */}
-        <div className="hidden lg:flex lg:basis-2/4 lg:justify-center">
+        {/* Moved to the left: Nav links */}
+        <div className="hidden lg:flex lg:gap-6 ml-10">
           <NavLinks />
         </div>
 
         {/* Right: Search + Icons + Profile */}
-        <div className="flex items-center gap-3 lg:basis-1/4 lg:justify-end">
+        <div className="flex items-center gap-3 ml-auto">
           {/* Search bar */}
           <form
             onSubmit={handleNavSearchSubmit}
