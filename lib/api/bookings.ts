@@ -145,6 +145,27 @@ export async function getBookingById(bookingId: string) {
   }
 }
 
+export async function getConfirmedBookings(listingId: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API}/api/bookings/listing/${listingId}`,
+      {
+        headers: {
+          ...authHeaders(),
+        }
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch booking");
+    }
+    const booking = await res.json();
+    return booking;
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function createPayment(paymentDetails: {
   bookingId: string;
   amount: number;

@@ -1,4 +1,5 @@
 "use client";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
@@ -21,11 +22,14 @@ import {
 import {
   acceptBooking,
   createBooking,
+  getConfirmedBookings,
   getLatestBooking,
   updateBooking,
 } from "@/lib/api/bookings";
 import { getListingById } from "@/lib/api/listings";
 import ReviewDialog from "../review-dialog";
+import DatePicker from "react-datepicker";
+import { format } from "date-fns";
 
 export default function ChatPage({
   listingId,
@@ -50,6 +54,12 @@ export default function ChatPage({
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState("");
+  const [disabledDates, setDisabledDates] = useState<string[]>([]);
+  const [availableRange, setAvailableRange] = useState<{
+    from: string;
+    until: string;
+  } | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,6 +79,17 @@ export default function ChatPage({
 
     const checkOwnership = async () => {
       const listing = await getListingById(listingId);
+      if (listing) {
+        setAvailableRange({
+          from: new Date(listing.availableFrom * 1000)
+            .toISOString()
+            .slice(0, 10),
+          until: new Date(listing.availableUntil * 1000)
+            .toISOString()
+            .slice(0, 10),
+        });
+      }
+
       if (listing?.user?.userId) {
         setListingOwnerId(listing.user.userId);
         if (listing.user.userId === userId) {
@@ -106,6 +127,32 @@ export default function ChatPage({
 
     fetchLatestBooking();
   }, [listingId, messages, isRenter, userEmail]);
+
+  useEffect(() => {
+    const fetchDisabledDates = async () => {
+      try {
+        const bookings = await getConfirmedBookings(listingId);
+        const disabled = new Set<string>();
+
+        bookings.forEach((booking: any) => {
+          const start = new Date(booking.startDate);
+          const end = new Date(booking.endDate);
+          const current = new Date(start);
+
+          while (current <= end) {
+            disabled.add(current.toISOString().slice(0, 10));
+            current.setDate(current.getDate() + 1);
+          }
+        });
+
+        setDisabledDates(Array.from(disabled));
+      } catch (err) {
+        console.error("Failed to fetch bookings", err);
+      }
+    };
+
+    if (listingId) fetchDisabledDates();
+  }, [listingId]);
 
   useEffect(() => {
     const q = query(
@@ -178,6 +225,8 @@ export default function ChatPage({
 
         alert("Booking created!");
       }
+
+      setIsDialogOpen(false);
     } catch (err) {
       console.error(err);
       alert("Failed to submit booking");
@@ -424,19 +473,25 @@ export default function ChatPage({
           })()
         ) : !isRenter ? (
           <Dialog
-            open={!!editingBookingId || undefined}
-            onOpenChange={() => setEditingBookingId(null)}
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) setEditingBookingId(null);
+            }}
           >
             <div className="flex gap-2">
               <DialogTrigger asChild>
                 <button
                   className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={hasActiveBooking && latestBooking?.status !== "Completed"}
+                  disabled={
+                    hasActiveBooking && latestBooking?.status !== "Completed"
+                  }
                   onClick={() => {
                     setStartDate("");
                     setEndDate("");
                     setPricePerDay("");
                     setEditingBookingId(null);
+                    setIsDialogOpen(true);
                   }}
                 >
                   Make Booking
@@ -474,16 +529,58 @@ export default function ChatPage({
                   Select your preferred dates and price per day.
                 </DialogDescription>
               </DialogHeader>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+              <DatePicker
+                selected={startDate ? new Date(startDate) : null}
+                onChange={(date: Date | null) =>
+                  setStartDate(date ? format(date, "yyyy-MM-dd") : "")
+                }
+                excludeDates={disabledDates.map((d) => new Date(d))}
+                minDate={
+                  availableRange ? new Date(availableRange.from) : undefined
+                }
+                maxDate={
+                  availableRange ? new Date(availableRange.until) : undefined
+                }
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select start date"
                 className="w-full rounded border px-3 py-2"
               />
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+              <DatePicker
+                selected={endDate ? new Date(endDate) : null}
+                onChange={(date: Date | null) => {
+                  if (!startDate || !date) return setEndDate("");
+
+                  const selectedStart = new Date(startDate);
+                  const selectedEnd = new Date(date);
+
+                  const hasOverlap = disabledDates.some((disabledDate) => {
+                    const d = new Date(disabledDate);
+                    return d >= selectedStart && d <= selectedEnd;
+                  });
+
+                  if (hasOverlap) {
+                    alert(
+                      "Your selected booking range overlaps with an existing booking. Please choose a different range.",
+                    );
+                    setEndDate("");
+                    return;
+                  }
+
+                  setEndDate(format(date, "yyyy-MM-dd"));
+                }}
+                excludeDates={disabledDates.map((d) => new Date(d))}
+                minDate={
+                  startDate
+                    ? new Date(startDate)
+                    : availableRange
+                      ? new Date(availableRange.from)
+                      : undefined
+                }
+                maxDate={
+                  availableRange ? new Date(availableRange.until) : undefined
+                }
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Select end date"
                 className="w-full rounded border px-3 py-2"
               />
               <input
