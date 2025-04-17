@@ -8,10 +8,24 @@ import CategoryDropdown from "@/components/ui/CategoryDropdown";
 import { cn } from "@/lib/utils";
 import { createListing } from "@/lib/api/listings";
 import Image from "next/image";
+import Swal from "sweetalert2";
 
 interface RentFormProps {
   userEmail: string;
 }
+
+export const CATEGORIES = [
+  "Home & Living",
+  "Electronics & Gadgets",
+  "Clothing & Accessories",
+  "Vehicles",
+  "Media & Production",
+  "Events & Party",
+  "Tools & Equipment",
+  "Kids & Baby",
+  "Outdoor & Sports",
+  "Others",
+];
 
 const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
   const router = useRouter();
@@ -29,20 +43,6 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
 
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-
-  // Define categories array for dropdown
-  const CATEGORIES = [
-    "Home & Living",
-    "Electronics & Gadgets",
-    "Clothing & Accessories",
-    "Vehicles",
-    "Media & Production",
-    "Events & Party",
-    "Tools & Equipment",
-    "Kids & Baby",
-    "Outdoor & Sports",
-    "Others",
-  ];
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -106,13 +106,19 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
 
     try {
       await createListing(userEmail, payload);
-      alert("Item listed successfully!");
+      await Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Item listed successfully!",
+      });
       router.push("/");
     } catch (err: any) {
       console.error(err);
-      alert(
-        `Failed: ${err.message || "Something went wrong. Please try again."}`,
-      );
+      await Swal.fire({
+        icon: "error",
+        title: "Failed to list item",
+        text: err.message || "Something went wrong. Please try again.",
+      });
     }
   };
 

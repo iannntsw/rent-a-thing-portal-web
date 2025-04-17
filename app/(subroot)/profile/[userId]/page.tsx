@@ -11,6 +11,7 @@ import { getUserById, updateUserProfile } from "@/lib/api/user";
 import Link from "next/link";
 import Image from "next/image";
 import { formatDateString } from "@/lib/utils";
+import Swal from "sweetalert2";
 
 export default function ViewProfilePage({
   params,
@@ -62,11 +63,21 @@ export default function ViewProfilePage({
       setShowEditDialog(false);
       const updated = await getUserById(userId);
       setUser(updated);
-    } catch (err) {
+
+      await Swal.fire({
+        icon: "success",
+        title: "Profile Updated",
+        text: "Your profile has been successfully updated.",
+      });
+    } catch (err: any) {
       console.error("Failed to update profile", err);
-      alert(
-        "Error updating profile. Please check for duplicate email, username, or phone number.",
-      );
+      await Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text:
+          err?.message ||
+          "Error updating profile. Please check for duplicate email, username, or phone number.",
+      });
     }
   };
 
@@ -180,7 +191,7 @@ export default function ViewProfilePage({
                 <div className="flex items-center justify-between">
                   <p className="font-semibold">Rating: {review.rating}⭐</p>
                   <span className="text-sm text-gray-500">
-                    {new Date(review.createdAt).toLocaleDateString()}
+                    {formatDateString(new Date(review.createdAt).toISOString())}
                   </span>
                 </div>
                 <p className="mt-2 text-sm text-gray-700">

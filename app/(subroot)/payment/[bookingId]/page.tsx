@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { createPayment, getBookingById } from "@/lib/api/bookings";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import Swal from "sweetalert2";
 
 export default function PaymentPage({
   params,
@@ -12,8 +13,8 @@ export default function PaymentPage({
   params: { bookingId: string };
 }) {
   const { bookingId } = params;
-  const searchParams = useSearchParams(); // 👈 Read search params
-  const convoId = searchParams.get("convoId"); // 👈 Get convoId from URL
+  const searchParams = useSearchParams();
+  const convoId = searchParams.get("convoId");
   const router = useRouter();
 
   const [booking, setBooking] = useState<any>(null);
@@ -59,7 +60,11 @@ export default function PaymentPage({
 
       setIsPaid(true);
     } catch (err) {
-      alert("Payment failed. Please try again.");
+      Swal.fire({
+        icon: "error",
+        title: "Payment Failed",
+        text: "Please try again.",
+      });
       console.error(err);
     } finally {
       setIsProcessing(false);
@@ -108,7 +113,8 @@ export default function PaymentPage({
               <>
                 <h2 className="mb-4 text-lg font-semibold">Confirm Payment</h2>
                 <p className="mb-2">
-                  You&apos;re about to pay <strong>${booking.totalPrice}</strong>.
+                  You&apos;re about to pay{" "}
+                  <strong>${booking.totalPrice}</strong>.
                 </p>
                 <p className="mb-4 text-sm text-gray-600">
                   Payment method: Credit Card
@@ -138,9 +144,13 @@ export default function PaymentPage({
                 <p className="mb-4">Thank you! Your booking has been paid.</p>
                 <button
                   className="w-full rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
-                  onClick={() => router.push("/")}
+                  onClick={() =>
+                    router.push(
+                      `/chat/${convoId}/${booking.listing?.listingId}`,
+                    )
+                  }
                 >
-                  Return to Home
+                  Return to Chat
                 </button>
               </>
             )}

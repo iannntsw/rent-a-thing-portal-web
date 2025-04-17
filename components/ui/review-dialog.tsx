@@ -10,6 +10,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { createReview } from "@/lib/api/bookings";
+import Swal from "sweetalert2";
 
 export default function ReviewDialog({
   listingId,
@@ -28,6 +29,7 @@ export default function ReviewDialog({
 
   const handleSubmit = async () => {
     try {
+      setOpen(false);
       await createReview({
         listingId,
         reviewerId,
@@ -37,11 +39,18 @@ export default function ReviewDialog({
         bookingId,
       });
 
-      alert("Review submitted successfully!");
-      setOpen(false);
-    } catch (error) {
+      await Swal.fire({
+        icon: "success",
+        title: "Review Submitted",
+        text: "Your review has been submitted successfully!",
+      });
+    } catch (error: any) {
       console.error("Error submitting review:", error);
-      alert("Failed to submit review.");
+      await Swal.fire({
+        icon: "error",
+        title: "Submission Failed",
+        text: error.message || "Failed to submit review. Please try again.",
+      });
     }
   };
 

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { DialogHeader } from "@/components/ui/dialog";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { formatDateString } from "@/lib/utils";
+import Swal from "sweetalert2";
 
 interface ListingPageProps {
   params: {
@@ -61,10 +62,19 @@ export default function ListingPage({ params }: ListingPageProps) {
   const handleDelete = async () => {
     try {
       await deleteListing(listing.listingId);
-      alert("Listing deleted.");
+      await Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Listing has been successfully deleted.",
+        confirmButtonColor: "#2C3725",
+      });
       router.push("/");
-    } catch (err) {
-      alert("Failed to delete listing.");
+    } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        title: "Delete Failed",
+        text: err?.message,
+      });
     }
   };
 

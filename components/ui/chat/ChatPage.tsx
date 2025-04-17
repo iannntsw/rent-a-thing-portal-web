@@ -32,6 +32,7 @@ import DatePicker from "react-datepicker";
 import { format } from "date-fns";
 import { formatDateString } from "@/lib/utils";
 import Image from "next/image";
+import Swal from "sweetalert2";
 
 export default function ChatPage({
   listingId,
@@ -72,10 +73,18 @@ export default function ChatPage({
 
     try {
       setShowReviewDialog(false);
-      alert("Review submitted!");
-    } catch (err) {
+      await Swal.fire({
+        icon: "success",
+        title: "Review Submitted",
+        text: "Thank you for your feedback!",
+      });
+    } catch (err: any) {
       console.error("Failed to submit review:", err);
-      alert("Error submitting review");
+      await Swal.fire({
+        icon: "error",
+        title: "Submission Failed",
+        text: err.message || "Error submitting review.",
+      });
     }
   };
 
@@ -201,6 +210,7 @@ export default function ChatPage({
     }
 
     try {
+      setIsDialogOpen(false);
       if (editingBookingId) {
         await updateBooking({
           bookingId: editingBookingId,
@@ -218,7 +228,11 @@ export default function ChatPage({
           createdAt: serverTimestamp(),
         });
 
-        alert("Booking updated!");
+        await Swal.fire({
+          icon: "success",
+          title: "Booking Updated",
+          text: "Your booking has been successfully updated.",
+        });
         setEditingBookingId(null);
       } else {
         const booking = await createBooking({
@@ -240,13 +254,20 @@ export default function ChatPage({
           createdAt: serverTimestamp(),
         });
 
-        alert("Booking created!");
+        await Swal.fire({
+          icon: "success",
+          title: "Booking Created",
+          text: "Your booking has been submitted successfully!",
+        });
       }
 
-      setIsDialogOpen(false);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to submit booking");
+      await Swal.fire({
+        icon: "error",
+        title: "Booking Failed",
+        text: err.message || "Failed to submit booking.",
+      });
     }
   };
 
@@ -267,10 +288,20 @@ export default function ChatPage({
         createdAt: serverTimestamp(),
       });
 
-      alert("Booking accepted! Payment request has been sent.");
-    } catch (err) {
+      await Swal.fire({
+        icon: "success",
+        title: "Booking Accepted",
+        text: "Payment request has been sent to the rentee.",
+      });
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to Booking offer");
+      await Swal.fire({
+        icon: "error",
+        title: "Failed to Accept Booking",
+        text:
+          err.message ||
+          "Something went wrong while accepting the booking offer.",
+      });
     }
   };
 
@@ -301,10 +332,19 @@ export default function ChatPage({
         createdAt: serverTimestamp(),
       });
 
-      alert("Booking cancelled");
-    } catch (err) {
+      await Swal.fire({
+        icon: "success",
+        title: "Booking Cancelled",
+        text: "The booking has been successfully cancelled.",
+      });
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to cancel booking");
+      await Swal.fire({
+        icon: "error",
+        title: "Cancellation Failed",
+        text:
+          err.message || "Something went wrong while cancelling the booking.",
+      });
     }
   };
 
@@ -346,10 +386,19 @@ export default function ChatPage({
       });
 
       setShowCompleteDialog(false);
-      alert("Booking marked as complete. Review request sent!");
-    } catch (err) {
+      await Swal.fire({
+        icon: "success",
+        title: "Booking Completed",
+        text: "Booking marked as complete. Review request sent!",
+      });
+    } catch (err: any) {
       console.error("Failed to complete booking:", err);
-      alert("Something went wrong while completing the booking.");
+      await Swal.fire({
+        icon: "error",
+        title: "Completion Failed",
+        text:
+          err.message || "Something went wrong while completing the booking.",
+      });
     }
   };
 
@@ -509,7 +558,6 @@ export default function ChatPage({
                     setEndDate("");
                     setPricePerDay("");
                     setEditingBookingId(null);
-                    setIsDialogOpen(true);
                   }}
                 >
                   Make Booking

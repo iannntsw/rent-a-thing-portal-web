@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { getListingById, updateListing } from "@/lib/api/listings";
 import Image from "next/image";
 import CategoryDropdown from "@/components/ui/CategoryDropdown";
+import Swal from "sweetalert2";
+import { CATEGORIES } from "@/components/form/create-listing-form";
 
 export default function EditListingPage({
   params,
@@ -97,11 +99,18 @@ export default function EditListingPage({
         availableUntil: new Date(form.availableUntil).getTime() / 1000,
         images: JSON.stringify(combinedImages),
       });
-      alert("Listing updated successfully!");
-      router.push(`/products/${id}`);
-    } catch (err) {
+      await Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Listing updated successfully.",
+      });      router.push(`/products/${id}`);
+    } catch (err: any) {
       console.error("Update failed", err);
-      alert("Failed to update listing.");
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: err?.response?.data?.message || err.message || "Something went wrong. Please try again.",
+      });
     }
   };
 
@@ -182,6 +191,9 @@ export default function EditListingPage({
           ))}
         </div>
 
+        <label className="block text-sm font-medium text-gray-700">
+          Title
+        </label>
         <input
           name="title"
           placeholder="Title"
@@ -189,6 +201,9 @@ export default function EditListingPage({
           onChange={handleChange}
           className="w-full rounded border p-2"
         />
+        <label className="block text-sm font-medium text-gray-700">
+          Description
+        </label>
         <textarea
           name="description"
           placeholder="Description"
@@ -196,6 +211,9 @@ export default function EditListingPage({
           onChange={handleChange}
           className="w-full rounded border p-2"
         />
+        <label className="block text-sm font-medium text-gray-700">
+          Price Per Day
+        </label>
         <input
           name="pricePerDay"
           type="number"
@@ -205,14 +223,15 @@ export default function EditListingPage({
           className="w-full rounded border p-2"
         />
 
-        <label className="block text-sm font-medium text-gray-700">
-          Category
-        </label>
         <CategoryDropdown
           value={form.category}
           onChange={(val) => setForm((prev) => ({ ...prev, category: val }))}
+          categories={CATEGORIES}
         />
 
+<label className="block text-sm font-medium text-gray-700">
+          Location
+        </label>
         <input
           name="location"
           placeholder="Location"
@@ -220,6 +239,9 @@ export default function EditListingPage({
           onChange={handleChange}
           className="w-full rounded border p-2"
         />
+        <label className="block text-sm font-medium text-gray-700">
+          Available From
+        </label>
         <input
           name="availableFrom"
           type="date"
@@ -227,6 +249,9 @@ export default function EditListingPage({
           onChange={handleChange}
           className="w-full rounded border p-2"
         />
+        <label className="block text-sm font-medium text-gray-700">
+          Available Until
+        </label>
         <input
           name="availableUntil"
           type="date"
