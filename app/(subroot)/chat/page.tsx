@@ -25,7 +25,6 @@ export default function ChatsPage() {
       where("participants", "array-contains", uid),
       orderBy("updatedAt", "desc")
     );
-    console.log(q)
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const chatsData = snapshot.docs.map((doc) => ({
@@ -37,36 +36,65 @@ export default function ChatsPage() {
 
     return () => unsubscribe();
   }, []);
-
+  console.log(chats)
   if (!userId) return <p className="p-6">Please log in to view your chats.</p>;
 
   return (
-    <div className="mx-auto max-w-2xl p-6">
-      <h1 className="mb-4 text-2xl font-bold">Your Chats</h1>
-      {chats.length === 0 ? (
-        <p className="text-gray-600">You have no chats yet.</p>
-      ) : (
-        <ul className="space-y-4">
-          {chats.map((chat) => (
-            <li
-              key={chat.id}
-              className="rounded border p-4 hover:shadow-md transition"
-            >
-              <Link
-                href={`/chat/${chat.id}/${chat.listingId}`}
-                className="block"
+    <div className="px-4 py-8 md:px-8 lg:px-16">
+      <div className="mx-auto max-w-4xl">
+        <h1 className="mb-6 text-left text-3xl font-semibold text-[#121212]">
+          Conversations
+        </h1>
+
+        {chats.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-lg bg-white p-12 text-center shadow-sm">
+            <div className="mb-4 rounded-full bg-gray-100 p-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <p className="font-semibold">
-                  Listing: {chat.listingTitle || "N/A"}
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Updated: {new Date(chat.updatedAt?.toDate()).toLocaleString()}
-                </p>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                />
+              </svg>
+            </div>
+            <p className="text-gray-600">You have no conversations yet.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {chats.map((chat) => (
+              <Link
+                key={chat.id}
+                href={`/chat/${chat.id}/${chat.listingId}`}
+              >
+                <div className="flex cursor-pointer rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:bg-gray-50 hover:shadow-md mb-2">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-medium text-[#121212]">
+                        Listing: {chat.listingTitle || "N/A"}
+                      </h3>
+                      {chat.updatedAt && (
+                        <span className="text-xs text-gray-500">
+                          Updated At: {chat.updatedAt.toDate().toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 line-clamp-1 text-sm text-gray-600">
+                      {chat.lastMessage || "Start chatting about this listing"}
+                    </p>
+                  </div>
+                </div>
               </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -24,6 +24,30 @@ export async function getUserById(userId: string) {
   }
 }
 
+export async function getUserByEmail(email: string) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_API}/api/users/getUserByEmail/${email}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders(),
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch user profile");
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+}
+
 export async function updateUserProfile(
   userId: string,
   data: {

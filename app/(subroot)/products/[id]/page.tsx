@@ -10,8 +10,8 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createOrGetChat } from "@/lib/api/messages";
 import Link from "next/link";
-import { DialogHeader } from "@/components/ui/dialog";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { DialogHeader } from "@/components/ui/dialog/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog";
 import { formatDateString } from "@/lib/utils";
 import Swal from "sweetalert2";
 
