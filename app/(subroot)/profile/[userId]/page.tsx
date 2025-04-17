@@ -99,6 +99,7 @@ export default function ViewProfilePage({
           className="h-24 w-24 rounded-full border object-cover"
           width={80}
           height={80}
+          unoptimized
         />
         <div>
           <h2 className="text-xl font-semibold">
@@ -147,6 +148,7 @@ export default function ViewProfilePage({
                     className="mb-2 h-32 w-32 rounded object-cover"
                     width={80}
                     height={80}
+                    unoptimized
                   />
                 </Link>
                 <h3 className="text-lg font-medium">{listing.title}</h3>
@@ -196,6 +198,7 @@ export default function ViewProfilePage({
                 className="mx-auto mb-2 h-24 w-24 rounded-full border object-cover"
                 width={80}
                 height={80}
+                unoptimized
               />
             )}
 

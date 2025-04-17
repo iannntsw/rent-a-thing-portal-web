@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { fetchAllListings } from "@/lib/api/listings";
 import CatalogSlider from "@/ui/slider/catalogSlider";
 import Heading from "@/ui/head";
@@ -48,7 +48,7 @@ type Listing = {
 
 type SortOption = "recent" | "price-low" | "price-high";
 
-export default function ProductListPage() {
+function ProductListPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
@@ -192,5 +192,13 @@ export default function ProductListPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-gray-500">Loading listings...</div>}>
+      <ProductListPage />
+    </Suspense>
   );
 }

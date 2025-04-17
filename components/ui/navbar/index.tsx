@@ -10,6 +10,7 @@ import { WishlistIcon, HamburgerMenu, ChatIcon } from "@/ui/assets/svg";
 import NavLinks from "@/ui/navbar/navLinks";
 import NavMobile from "@/ui/navbar/navMobile";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const Navbar: React.FC = () => {
   const router = useRouter();
@@ -113,10 +114,13 @@ const Navbar: React.FC = () => {
                 onClick={() => setDropdownOpen((prev) => !prev)}
                 className="flex items-center gap-2 rounded-md px-2 text-sm font-medium hover:bg-gray-100"
               >
-                <img
+                <Image
                   src={user.profilePicture || "/default-avatar.png"}
                   alt="Profile"
                   className="h-8 w-8 rounded-full border object-cover"
+                  width={30}
+                  height={30}
+                  unoptimized
                 />
                 <span>Hello, {user.username}</span>
                 <svg

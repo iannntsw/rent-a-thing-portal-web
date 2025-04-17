@@ -5,7 +5,7 @@ import React from "react";
 type CategoryDropdownProps = {
   value: string;
   onChange: (value: string) => void;
-  categories: string[];
+  categories?: string[];
 };
 
 const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
@@ -22,7 +22,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
         className="w-full rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2c3725]"
       >
         <option value="">All Categories</option>
-        {categories.map((cat) => (
+        {categories?.map((cat) => (
           <option key={cat} value={cat}>
             {cat}
           </option>
