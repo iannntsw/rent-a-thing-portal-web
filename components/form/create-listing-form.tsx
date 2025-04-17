@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Input from "@/components/form/input";
+import CategoryDropdown from "@/components/ui/CategoryDropdown";
+
 import { cn } from "@/lib/utils";
 import { createListing } from "@/lib/api/listings";
 import Image from "next/image";
@@ -27,6 +29,20 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
 
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+
+  // Define categories array for dropdown
+  const CATEGORIES = [
+    "Home & Living",
+    "Electronics & Gadgets",
+    "Clothing & Accessories",
+    "Vehicles",
+    "Media & Production",
+    "Events & Party",
+    "Tools & Equipment",
+    "Kids & Baby",
+    "Outdoor & Sports",
+    "Others",
+  ];
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -137,16 +153,15 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
         />
       </div>
 
+      {/* category */}
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Category
-        </label>
-        <Input
-          name="category"
-          placeholder="e.g. Chair, Electronics"
+        <label className="block text-sm font-medium text-gray-700"></label>
+        <CategoryDropdown
           value={formData.category}
-          onChange={handleChange}
-          required
+          onChange={(val) =>
+            setFormData((prev) => ({ ...prev, category: val }))
+          }
+          categories={CATEGORIES}
         />
       </div>
 
@@ -243,7 +258,7 @@ const RentForm: React.FC<RentFormProps> = ({ userEmail }) => {
 
       <button
         type="submit"
-        className="w-full rounded-md bg-red-600 px-4 py-2 text-white transition hover:bg-red-700"
+        className="w-full rounded-md bg-[#2C3725] px-4 py-2 text-white hover:bg-[#1f251a]"
       >
         List Item
       </button>

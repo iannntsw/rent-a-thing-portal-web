@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getListingById, updateListing } from "@/lib/api/listings";
 import Image from "next/image";
+import CategoryDropdown from "@/components/ui/CategoryDropdown";
 
 export default function EditListingPage({
   params,
@@ -81,11 +82,14 @@ export default function EditListingPage({
             reader.onerror = reject;
             reader.readAsDataURL(file);
           });
-        })
+        }),
       );
-  
-      const combinedImages = [...existingImages, ...base64NewImages].slice(0, 5); // Limit to 5
-  
+
+      const combinedImages = [...existingImages, ...base64NewImages].slice(
+        0,
+        5,
+      ); // Limit to 5
+
       await updateListing(id, {
         ...form,
         pricePerDay: parseFloat(form.pricePerDay),
@@ -200,13 +204,15 @@ export default function EditListingPage({
           onChange={handleChange}
           className="w-full rounded border p-2"
         />
-        <input
-          name="category"
-          placeholder="Category"
+
+        <label className="block text-sm font-medium text-gray-700">
+          Category
+        </label>
+        <CategoryDropdown
           value={form.category}
-          onChange={handleChange}
-          className="w-full rounded border p-2"
+          onChange={(val) => setForm((prev) => ({ ...prev, category: val }))}
         />
+
         <input
           name="location"
           placeholder="Location"

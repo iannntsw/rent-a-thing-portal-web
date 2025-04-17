@@ -86,7 +86,7 @@ export default function ViewProfilePage({
         {userId === loggedInUserId && (
           <button
             onClick={() => setShowEditDialog(true)}
-            className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+            className="rounded bg-[#2C3725] px-4 py-2 text-white hover:bg-[#1f251a]"
           >
             Edit Profile
           </button>
@@ -99,6 +99,7 @@ export default function ViewProfilePage({
           className="h-24 w-24 rounded-full border object-cover"
           width={80}
           height={80}
+          unoptimized
         />
         <div>
           <h2 className="text-xl font-semibold">
@@ -147,6 +148,7 @@ export default function ViewProfilePage({
                     className="mb-2 h-32 w-32 rounded object-cover"
                     width={80}
                     height={80}
+                    unoptimized
                   />
                 </Link>
                 <h3 className="text-lg font-medium">{listing.title}</h3>
@@ -196,6 +198,7 @@ export default function ViewProfilePage({
                 className="mx-auto mb-2 h-24 w-24 rounded-full border object-cover"
                 width={80}
                 height={80}
+                unoptimized
               />
             )}
 
@@ -295,7 +298,7 @@ export default function ViewProfilePage({
                 Cancel
               </button>
               <button
-                className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                className="rounded bg-[#2C3725] px-4 py-2 text-white hover:bg-[#1f251a]"
                 onClick={handleSave}
               >
                 Save Changes
