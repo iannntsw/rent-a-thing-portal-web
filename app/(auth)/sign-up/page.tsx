@@ -131,7 +131,7 @@ export default function Page() {
               </h1>
               <Text weight={400} color="gray">
                 Already have an account?{" "}
-                <span className="font-semibold text-[#38CB89] hover:underline">
+                <span className="font-semibold text-[#809671] hover:underline">
                   <Link href="/sign-in">Sign In</Link>
                 </span>
               </Text>

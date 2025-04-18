@@ -88,7 +88,10 @@ export default function Page() {
               </h1>
               <Text weight={400} color="gray">
                 Don&apos;t have an account yet?{" "}
-                <span className="font-semibold text-black hover:underline">
+                <span
+                  className="font-semibold hover:underline"
+                  style={{ color: "#809671" }}
+                >
                   <Link href="/sign-up">Sign Up</Link>
                 </span>
               </Text>
@@ -143,7 +146,7 @@ export default function Page() {
                 Sign In
               </Button>
             </form>
-                
+
             {/* 
             <div className="relative my-4 flex items-center justify-center">
               <div className="h-[1px] w-full bg-gray-300"></div>

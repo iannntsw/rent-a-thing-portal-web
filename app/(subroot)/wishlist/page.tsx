@@ -15,54 +15,63 @@ export default function WishlistPage() {
     const listings = await Promise.all(promises);
     setWishlistItems(listings);
   };
-  useEffect(() => {
-    
 
+  useEffect(() => {
     fetchWishlist();
   }, []);
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Your Wishlist</h1>
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-        {wishlistItems.length === 0 ? (
-          <p>No items in your wishlist yet.</p>
-        ) : (
-          wishlistItems.map((product) => (
-                <ProductCard.Root
-                  key={product.listingId}
-                  data={{
+    <div className="px-4 py-8 md:px-8 lg:px-16">
+      <div className="mx-auto max-w-5xl">
+        <h1 className="mb-6 text-left text-3xl font-semibold text-[#121212]">
+          Your Wishlist
+        </h1>
 
-                    listingId: String(product.listingId),
-                    title: product.title,
-                    pricePerDay: product.pricePerDay,
-                    description: product.description,
-                    images: product.images, // wrap in array and stringify
-                    rating: product.rating,
-                  }}
-                  className="w-[231px] flex-none"
-                >
-                  <ProductCard.Thumbnail>
-                    <ProductCard.ThumbnailBadge>
-                      <div className="space-y-1">
-                        <ProductCard.Badge intent="default">new</ProductCard.Badge> 
-                      </div>
-                      <ProductCard.WishlistButton listingId={String(product.listingId)} callback={fetchWishlist}/>
-                    </ProductCard.ThumbnailBadge>
-      
-                    <Link href={`/products/${product.listingId}`}> 
-                      <ProductCard.Image />
-                    </Link>
-                  </ProductCard.Thumbnail>
-      
-                  <ProductCard.Content>
-                    <ProductCard.Ratings />
-                    <ProductCard.Name />
-                    <ProductCard.Price />
-                  </ProductCard.Content>
-                </ProductCard.Root>
-              
-          ))
+        {wishlistItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-lg bg-white p-12 text-center shadow-sm">
+            <p className="text-gray-600">No items in your wishlist yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+            {wishlistItems.map((product) => (
+              <ProductCard.Root
+                key={product.listingId}
+                data={{
+                  listingId: String(product.listingId),
+                  title: product.title,
+                  pricePerDay: product.pricePerDay,
+                  description: product.description,
+                  images: product.images,
+                  rating: product.rating,
+                }}
+                className="w-full"
+              >
+                <ProductCard.Thumbnail>
+                  <ProductCard.ThumbnailBadge>
+                    <div className="space-y-1">
+                      <ProductCard.Badge intent="default">
+                        new
+                      </ProductCard.Badge>
+                    </div>
+                    <ProductCard.WishlistButton
+                      listingId={String(product.listingId)}
+                      callback={fetchWishlist}
+                    />
+                  </ProductCard.ThumbnailBadge>
+
+                  <Link href={`/products/${product.listingId}`}>
+                    <ProductCard.Image />
+                  </Link>
+                </ProductCard.Thumbnail>
+
+                <ProductCard.Content>
+                  <ProductCard.Ratings />
+                  <ProductCard.Name />
+                  <ProductCard.Price />
+                </ProductCard.Content>
+              </ProductCard.Root>
+            ))}
+          </div>
         )}
       </div>
     </div>
