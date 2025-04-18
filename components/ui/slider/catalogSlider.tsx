@@ -44,10 +44,10 @@ export default function CatalogSlider({ products }: CatalogSliderProps) {
               <ProductCard.Thumbnail>
                 <ProductCard.ThumbnailBadge>
                   <ProductCard.Badge>new</ProductCard.Badge>
-                  <ProductCard.WishlistButton />
+                  <ProductCard.WishlistButton listingId={product.listingId} callback={() => {}}/>
                 </ProductCard.ThumbnailBadge>
 
-                <Link href={`/products/${product.listingId}`}>
+                <Link href={`/products/${product.listingId}`}> 
                   <ProductCard.Image />
                 </Link>
               </ProductCard.Thumbnail>

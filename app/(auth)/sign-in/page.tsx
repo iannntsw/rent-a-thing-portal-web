@@ -143,12 +143,13 @@ export default function Page() {
                 Sign In
               </Button>
             </form>
-
+                
+            {/* 
             <div className="relative my-4 flex items-center justify-center">
               <div className="h-[1px] w-full bg-gray-300"></div>
               <span className="absolute bg-white px-4 text-gray-500">OR</span>
             </div>
-            {/* 
+ 
             <button
               onClick={() => signIn("google")}
               className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 px-4 py-2 transition hover:bg-gray-100"
