@@ -1,17 +1,18 @@
 "use client";
 
 // package
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { default as NextImage, ImageProps as NextImageProps } from "next/image";
 import { VariantProps, cva } from "class-variance-authority";
 
 // ui
 import ButtonPrimitive, { ButtonProps } from "@/ui/button";
 import Text, { TextProps } from "@/ui/text";
-import { StarIcon, WishlistIcon } from "@/ui/assets/svg";
+import { StarIcon, WishlistIcon, WishlistIconFilled, WishlistIconOutline } from "@/ui/assets/svg";
 
 // lib
 import { cn, formatCurrency, formatRating } from "@/lib/utils";
+import { isInWishlist, addToWishlist, removeFromWishlist } from "@/lib/wishlist";
 
 // hooks
 import {
@@ -100,21 +101,49 @@ const Badge: React.FC<BadgeProps> = ({
   );
 };
 
-type WishlistButtonProps = React.HTMLAttributes<HTMLButtonElement>;
+type WishlistButtonProps = {
+  listingId: string;
+  callback: any;
+  className?: string;
+};
 
 const WishlistButton: React.FC<WishlistButtonProps> = ({
+  listingId,
+  callback,
   className,
-  ...props
 }) => {
+  const [isWished, setIsWished] = useState(false);
+  const [animate, setAnimate] = useState(false);
+  useEffect(() => {
+    const current = isInWishlist(listingId);
+    setIsWished(current);
+  }, []);
+
+   const  handleClick = () => {
+    const updated = !isWished;
+    setIsWished(updated);
+    updated ? addToWishlist(listingId) : removeFromWishlist(listingId);
+
+    // trigger animation
+    setAnimate(true);
+    setTimeout(() => setAnimate(false), 300); // matches Tailwind's default animation durations
+    callback();
+  };
+
   return (
     <button
+      onClick={handleClick}
       className={cn(
-        "shadow-[rgba(15, 15, 15, 0.12)] flex h-8 w-8 items-center justify-center rounded-full bg-white opacity-0 shadow-md transition-opacity duration-100 ease-out group-hover:opacity-100",
-        className,
+        "shadow-[rgba(15,15,15,0.12)] flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md transition-transform duration-300 ease-in-out group-hover:opacity-100",
+        animate ? "scale-125" : "scale-100",
+        className
       )}
-      {...props}
     >
-      <WishlistIcon className="h-5 w-5" />
+      {isWished ? (
+        <WishlistIconFilled className="h-5 w-5" />
+      ) : (
+        <WishlistIconOutline className="h-5 w-5" />
+      )}
     </button>
   );
 };

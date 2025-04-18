@@ -41,7 +41,9 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
+    const wishlistArr = localStorage.getItem("wishlist")
     localStorage.clear();
+    if (wishlistArr !== null)localStorage.setItem("wishlist", (wishlistArr))
     router.push("/sign-in");
   };
 
@@ -105,6 +107,10 @@ const Navbar: React.FC = () => {
           {/* Chat icon */}
           <Link href="/chat">
             <ChatIcon className="h-5 w-5 text-gray-700 hover:opacity-80" />
+          </Link>
+
+          <Link href="/wishlist">
+            <WishlistIcon className="h-5 w-5 text-gray-700 hover:opacity-80" />
           </Link>
 
           {/* Profile + Dropdown */}

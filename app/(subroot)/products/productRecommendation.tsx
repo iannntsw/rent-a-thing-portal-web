@@ -33,7 +33,8 @@ const ProductRecommendation = () => {
                   <ProductCard.Badge intent="default">new</ProductCard.Badge>
                   <ProductCard.Badge intent="discount">-50%</ProductCard.Badge>
                 </div>
-                <ProductCard.WishlistButton />
+
+                <ProductCard.WishlistButton listingId={String(product.id)} callback={()=>{}}/>
               </ProductCard.ThumbnailBadge>
 
               <ProductCard.Image />
