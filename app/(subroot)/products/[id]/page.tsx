@@ -11,7 +11,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createOrGetChat } from "@/lib/api/messages";
 import Link from "next/link";
 import { DialogHeader } from "@/components/ui/dialog/dialog";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog/dialog";
 import { formatDateString } from "@/lib/utils";
 import Swal from "sweetalert2";
 
@@ -149,7 +153,7 @@ export default function ListingPage({ params }: ListingPageProps) {
 
         <div>
           <h1 className="mb-2 text-2xl font-bold">{listing.title}</h1>
-          <p className="text-xl font-semibold text-red-600">
+          <p className="text-xl font-semibold" style={{ color: "#2C3725" }}>
             S${listing.pricePerDay} / day
           </p>
         </div>
@@ -161,8 +165,13 @@ export default function ListingPage({ params }: ListingPageProps) {
             <h3>Location: {listing.location}</h3>
             <h3>
               Available:{" "}
-              {formatDateString(new Date(listing.availableFrom * 1000).toISOString())} -{" "}
-              {formatDateString(new Date(listing.availableUntil * 1000).toISOString())}
+              {formatDateString(
+                new Date(listing.availableFrom * 1000).toISOString(),
+              )}{" "}
+              -{" "}
+              {formatDateString(
+                new Date(listing.availableUntil * 1000).toISOString(),
+              )}
             </h3>
             <h3>Description: {listing.description}</h3>
           </div>
@@ -190,7 +199,10 @@ export default function ListingPage({ params }: ListingPageProps) {
               @{listing.user?.username}
             </Link>
             <p className="text-sm text-gray-600">
-              Joined: {formatDateString(new Date(listing.user?.createdAt).toISOString())}
+              Joined:{" "}
+              {formatDateString(
+                new Date(listing.user?.createdAt).toISOString(),
+              )}
             </p>
           </div>
         </div>
@@ -199,7 +211,14 @@ export default function ListingPage({ params }: ListingPageProps) {
           <div className="space-y-2">
             <button
               onClick={() => router.push(`/products/edit/${listing.listingId}`)}
-              className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              className="w-full rounded-md px-4 py-2 text-white"
+              style={{ backgroundColor: "#2C3725" }}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.backgroundColor = "#1f261a")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.backgroundColor = "#2C3725")
+              }
             >
               Edit Listing
             </button>
@@ -240,7 +259,14 @@ export default function ListingPage({ params }: ListingPageProps) {
         ) : (
           <button
             onClick={handleChatNow}
-            className="w-full rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+            className="w-full rounded-md px-4 py-2 text-white"
+            style={{ backgroundColor: "#2C3725" }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.backgroundColor = "#1f261a")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.backgroundColor = "#2C3725")
+            }
           >
             Chat Now
           </button>

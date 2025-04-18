@@ -86,14 +86,14 @@ export default function Home() {
             </Text>
           </div>
 
-          <Link href="/sign-up">
+          {/* <Link href="/sign-up">
             <Button
               fontSize="sm"
               className="rounded-lg bg-[#2c3725] px-14 py-3 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-[#576b4a] md:text-lg"
             >
               Get Started
             </Button>
-          </Link>
+          </Link> */}
         </div>
 
         {/* Search button*/}
