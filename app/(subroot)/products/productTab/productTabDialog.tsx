@@ -1,5 +1,5 @@
 // ui
-import { Dialog, DialogTrigger, DialogContent } from "@/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent } from "@/ui/dialog/dialog";
 
 const ProductTabDialog = ({
   trigger,

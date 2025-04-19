@@ -117,7 +117,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({
   useEffect(() => {
     const current = isInWishlist(listingId);
     setIsWished(current);
-  }, []);
+  }, [listingId]);
 
    const  handleClick = () => {
     const updated = !isWished;
