@@ -183,13 +183,21 @@ export default function ListingPage({ params }: ListingPageProps) {
           <div className="h-14 w-14 overflow-hidden rounded-full bg-gray-200">
             {listing.user?.profilePicture ? (
               <Image
-                src={listing.user.profilePicture}
+                src={listing.user.profilePicture || "/images/default-user.png"}
                 alt="Profile"
                 width={56}
                 height={56}
                 className="rounded-full object-cover"
               />
-            ) : null}
+            ) : (
+              <Image
+                src={"/images/default-user.png"}
+                alt="Profile"
+                width={56}
+                height={56}
+                className="rounded-full object-cover"
+              />
+            )}
           </div>
           <div>
             <Link
