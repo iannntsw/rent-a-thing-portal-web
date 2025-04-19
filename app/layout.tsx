@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 // css
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -32,7 +33,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cn(inter.variable, poppins.variable)}>
+      <AuthProvider>
       <body>{children}</body>
+      </AuthProvider>
     </html>
   );
 }

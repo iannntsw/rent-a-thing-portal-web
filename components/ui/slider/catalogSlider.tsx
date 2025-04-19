@@ -36,14 +36,13 @@ export default function CatalogSlider({ products }: CatalogSliderProps) {
   }
 
   return (
-    <div className="relative">
-      <div ref={slideRef} className="keen-slider">
+    <div className="relative" key={products.length > 0 ? products[0].listingId : "empty"}>
+      <div ref={slideRef} className="keen-slider flex gap-x-4">
         {products.map((product) => (
           <div key={product.listingId} className="keen-slider__slide">
             <ProductCard.Root data={product}>
               <ProductCard.Thumbnail>
                 <ProductCard.ThumbnailBadge>
-                  <ProductCard.Badge>new</ProductCard.Badge>
                   <ProductCard.WishlistButton
                     listingId={product.listingId}
                     callback={() => {}}

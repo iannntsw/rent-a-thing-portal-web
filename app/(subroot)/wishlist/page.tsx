@@ -65,7 +65,6 @@ export default function WishlistPage() {
                 </ProductCard.Thumbnail>
 
                 <ProductCard.Content>
-                  <ProductCard.Ratings />
                   <ProductCard.Name />
                   <ProductCard.Price />
                 </ProductCard.Content>

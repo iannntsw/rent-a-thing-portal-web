@@ -121,7 +121,7 @@ const Navbar: React.FC = () => {
                 className="flex items-center gap-2 rounded-md px-2 text-sm font-medium hover:bg-gray-100"
               >
                 <Image
-                  src={user.profilePicture || "/default-avatar.png"}
+                  src={user.profilePicture || "/images/default-user.png"}
                   alt="Profile"
                   className="h-8 w-8 rounded-full border object-cover"
                   width={30}

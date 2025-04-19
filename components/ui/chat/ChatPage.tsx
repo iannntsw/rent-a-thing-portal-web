@@ -401,7 +401,7 @@ export default function ChatPage({
         <div className="w-1/4 min-w-[240px] rounded-2xl border border-gray-200 bg-white p-5 shadow-md">
           <div className="flex flex-col items-center text-center">
             <Image
-              src={chatPartner.profilePicture || "/default-avatar.png"}
+              src={chatPartner.profilePicture || "/images/default-user.png"}
               alt="User Profile"
               width={96}
               height={96}

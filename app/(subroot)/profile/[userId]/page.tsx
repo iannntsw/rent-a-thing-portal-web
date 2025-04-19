@@ -108,7 +108,7 @@ export default function ViewProfilePage({
 
         <div className="mb-8 flex items-center gap-6">
           <Image
-            src={user.profilePicture || "/default-avatar.png"}
+            src={user.profilePicture || "/images/default-user.png"}
             alt="Profile"
             className="h-24 w-24 rounded-full border object-cover"
             width={96}
