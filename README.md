@@ -11,6 +11,98 @@ Secondly, Create a .env file in the root of the project and Put the following
 NEXT_PUBLIC_BACKEND_API="http://localhost:3001"
 ```
 
+## Google Firestore
+As we are using Google Firestore for real-time chat messaging, there are some configurations needed. The project already has a configuration by our group but the below is to show how you can set it up yourself
+
+### Prerequisites
+- Firebase CLI: 
+```
+npm install -g firebase-tools
+```
+- Firebase Web SDK:
+```
+npm i firebase
+```
+
+### Create a Project
+- Select your project or create a new one
+- In Project Settings → General, scroll to Your apps
+- Click </> (Web App) to register your app
+- Copy the Firebase config snippet:
+```
+// Example:
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "your-app.firebaseapp.com",
+  projectId: "your-app-id",
+  storageBucket: "your-app.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdefg12345",
+};
+```
+
+Create a file at lib/firebase.ts:
+```ts
+// lib/firebase.ts
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+};
+
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
+```
+
+Add your Firebase keys to your .env.local:
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-auth-domain.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-storage-bucket.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+```
+
+### Firestore Rules (For Testing)
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Allow reading/writing user's own profile (if needed)
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Chat document permissions
+    match /chats/{chatId} {
+      allow read, write: if request.auth != null;
+
+      // Messages inside each chat
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+
+    // Conversations fallback (if you're using a `conversations` collection somewhere)
+    match /conversations/{convoId} {
+      allow read, write: if request.auth != null;
+
+      match /messages/{messageId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+  }
+}
+```
+## Deployment
 Lastly, run the development server:
 
 ```bash
