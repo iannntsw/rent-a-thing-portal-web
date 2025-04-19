@@ -6,16 +6,15 @@ First, install the packages:
 npm i
 ```
 
-First, run the development server:
+Secondly, Create a .env file in the root of the project and Put the following
+```bash
+NEXT_PUBLIC_BACKEND_API="http://localhost:3001"
+```
+
+Lastly, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
